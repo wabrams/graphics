@@ -66,10 +66,10 @@ void projection()
   glLoadIdentity();
   //  Perspective transformation
   if (mode == MODE_OVERHEAD_PERSPECTIVE || mode == MODE_FIRSTPERSON_PERSPECTIVE)
-    gluPerspective(v.fov,v.asp,v.dim/4,4*v.dim);
+    gluPerspective(v.fov,win.asp,v.dim/4,4*v.dim);
   //  Orthogonal projection
   else if (mode == MODE_OVERHEAD_ORTHOGONAL)
-    glOrtho(-v.asp*v.dim,+v.asp*v.dim, -v.dim,+v.dim, -v.dim,+v.dim);
+    glOrtho(-win.asp*v.dim,+win.asp*v.dim, -v.dim,+v.dim, -v.dim,+v.dim);
   //  Switch to manipulating the model matrix
   glMatrixMode(GL_MODELVIEW);
   //  Undo previous transformations
@@ -147,7 +147,7 @@ void display()
   //  Five pixels from the lower left corner of the window
   glWindowPos2i(5,5);
   //  Print the text string
-  Print("VA=(%d,%d), DIM=%2.2f, FOV=%d, ASP=%2.2f [%s]", v.th, v.ph, v.dim, v.fov, v.asp, mtext[mode]);
+  Print("VA=(%d,%d), DIM=%2.2f, FOV=%d [%s]", v.th, v.ph, v.dim, v.fov, mtext[mode]);
   // Check for errors
   ErrCheck("display");
   //  Render the scene
@@ -161,6 +161,7 @@ void reshape(int width,int height)
 {
   win.w = width;
   win.h = height;
+  win.asp = 1.0 * width / height;
   glViewport(0, 0, width,height);
   // Let projection handle the rest
   projection();
@@ -243,11 +244,15 @@ void key(unsigned char ch, int x, int y)
       break;
     case 'a':
     case 'A':
-      p.yaw += 2;
+      p.yaw -= 2;
+      if (p.yaw < 0)
+        p.yaw += 360;
       break;
     case 'd':
     case 'D':
-      p.yaw -= 2;
+      p.yaw += 2;
+      if (p.yaw >= 360)
+        p.yaw -= 360;
       break;
     case 'm':
       // next display mode
@@ -295,13 +300,13 @@ void idle()
 int main(int argc,char* argv[])
 {
   win.w = win.h = 500;
+  win.asp = 1;
 
   v.th = -45;
   v.ph = +45;
   v.dim = 2.5;
   v.axes = false;
   v.fov = 55;
-  v.asp = 1;
 
   p.pitch = 0;
   p.yaw = 0;

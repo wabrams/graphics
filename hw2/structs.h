@@ -7,6 +7,7 @@ struct window_s
 {
   int w;
   int h;
+  float asp;
 };
 
 struct coord1_s
@@ -37,7 +38,6 @@ struct view_s
   float dim;
   bool axes;
   int fov;
-  float asp;
 };
 
 struct color_s
