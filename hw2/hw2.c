@@ -24,6 +24,7 @@ enum viewmode_e
 typedef enum viewmode_e viewmode_t;
 
 ccoord_t p; //1st person pov (player)
+const float sp = 0.05; //speed (for player)
 window_t win;
 view_t v;
 viewmode_t mode = MODE_OVERHEAD_ORTHOGONAL;
@@ -242,15 +243,25 @@ void key(unsigned char ch, int x, int y)
     case 'F':
       p.c.y -= 0.05;
       break;
+    case 'w':
+    case 'W':
+      p.c.x += sp *  Sin(p.yaw);
+      p.c.z += sp * -Cos(p.yaw);
+      break;
+    case 's':
+    case 'S':
+      p.c.x += sp * -Sin(p.yaw);
+      p.c.z += sp *  Cos(p.yaw);
+      break;
     case 'a':
     case 'A':
-      p.yaw -= 2;
+      p.yaw -= 4;
       if (p.yaw < 0)
         p.yaw += 360;
       break;
     case 'd':
     case 'D':
-      p.yaw += 2;
+      p.yaw += 4;
       if (p.yaw >= 360)
         p.yaw -= 360;
       break;
