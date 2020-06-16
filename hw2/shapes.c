@@ -207,10 +207,21 @@ void house(double x, double y, double z, double dx, double dy, double dz, double
   glBegin(GL_QUADS);
   //  Front
   glColor3f(r + 0.1, g + 0.1, b + 0.1);
+  //L
   glVertex3f(-1,-1, 1);
+  glVertex3f(-0.3,-1, 1);
+  glVertex3f(-0.3,+1, 1);
+  glVertex3f(-1,+1, 1);
+  //C
+  glVertex3f(-0.3,0, 1);
+  glVertex3f(0.3,0, 1);
+  glVertex3f(.3,+1, 1);
+  glVertex3f(-.3,+1, 1);
+  //R
+  glVertex3f(.3,-1, 1);
   glVertex3f(+1,-1, 1);
   glVertex3f(+1,+1, 1);
-  glVertex3f(-1,+1, 1);
+  glVertex3f(.3,+1, 1);
   //  Back
   glColor3f(r + 0.1, g + 0.1, b - 0.1);
   glVertex3f(+1,-1,-1);

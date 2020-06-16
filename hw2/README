@@ -4,7 +4,7 @@ CSCI 4229, Summer 2020
 My unpolished submission for homework #2.
 
 Time Spent:
-  ~6 hours, but i should have been able to do this faster, spent too much time just playing with the example code (the planes were very distracting...). I'm submitting what i have for now so i can get some sleep, i'm really enjoying playing around with the perspective just i should have spent more modifying the example code before i started rather than having to reference them so heavily.
+  7 hours, the first submission was rough and unpolished, this one is good to go. the house shapes are somewhat elementary, but hopefully it meets the minimum requirements.
 
 Controls:
   1          mode 1 shortcut
@@ -19,8 +19,10 @@ Controls:
   o/O        Decrease FOV
   =/+        Decrease DIM (zoom in)
   -/_        Increase DIM (zoom out)
-  a/A        Increase yaw (look right)
-  d/D        Increase yaw (look left)
+  a/A        Look right
+  d/D        Look left
+  w/W        Move forwards
+  s/S        Move backwards
 
 
 acknowledgements:
