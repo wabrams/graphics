@@ -25,9 +25,9 @@ typedef enum viewmode_e viewmode_t;
 
 ccoord_t p; //1st person pov (player)
 const float sp = 0.05; //speed (for player)
-bool l = false; //enter lighting control mode
 window_t win;
 view_t v;
+light_t l;
 viewmode_t mode = MODE_OVERHEAD_ORTHOGONAL;
 const char * mtext[] = {"OH_ORTH", "OH_PRSP", "1P_PRSP"};
 
@@ -113,6 +113,7 @@ void display()
       fprintf(stderr, "illegal mode %d!\n", mode);
       exit(0);
   }
+
   // enable face culling
   // glEnable(GL_CULL_FACE);
   // glCullFace(GL_BACK);
@@ -149,7 +150,7 @@ void display()
   //  Five pixels from the lower left corner of the window
   glWindowPos2i(5,5);
   //  Print the text string
-  if (l)
+  if (l.light)
     Print("LGHT: ");
   else
     Print("MOVE: VA=(%d,%d), DIM=%2.2f, FOV=%d [%s]", v.th, v.ph, v.dim, v.fov, mtext[mode]);
@@ -177,7 +178,7 @@ void special(int key, int x, int y)
 {
   UNUSED(x);
   UNUSED(y);
-  if (l)
+  if (l.light)
   {
     switch (key)
     {
@@ -218,7 +219,7 @@ void key(unsigned char ch, int x, int y)
   UNUSED(x);
   UNUSED(y);
 
-  if (l)
+  if (l.light)
   {
     switch (ch)
     {
@@ -230,7 +231,7 @@ void key(unsigned char ch, int x, int y)
         break;
       case 'l':
       case 'L':
-        l = !l;
+        l.light = !l.light;
         break;
     }
   }
@@ -307,7 +308,7 @@ void key(unsigned char ch, int x, int y)
         break;
       case 'l':
       case 'L':
-        l = !l;
+        l.light = !l.light;
         break;
       case 'o':
       case 'O':
@@ -333,7 +334,7 @@ void key(unsigned char ch, int x, int y)
 // GLUT calls this routine when there is nothing else to do
 void idle()
 {
-   double t = glutGet(GLUT_ELAPSED_TIME)/1000.0;
+   // double t = glutGet(GLUT_ELAPSED_TIME)/1000.0;
    glutPostRedisplay();
 }
 
@@ -354,7 +355,17 @@ int main(int argc,char* argv[])
   p.pitch = 0;
   p.yaw = 0;
   p.c.x = p.c.z = 1;
-  p.c.y = 0.1;
+  p.c.y = 0.3;
+
+  l.light = false;
+  l.smooth = true;
+  l.emission = 0;
+  l.ambient = 10;
+  l.diffuse = 50;
+  l.specular = 0;
+  l.shininess = 0;
+  l.shiny = 1;
+
   //  Initialize GLUT and process user parameters
   glutInit(&argc,argv);
   //  Request double buffered, true color window with Z buffering at 600x600

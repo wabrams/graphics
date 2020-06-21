@@ -197,6 +197,13 @@ void yzplane(double x, double y, double z, double sy, double sz)
 
 void house(double x, double y, double z, double dx, double dy, double dz, double th, float r, float g, float b)
 {
+  float shiny = 1;
+  float white[] = {1,1,1,1};
+  float black[] = {0,0,0,1};
+  glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,black);
+
   //  Save transformation
   glPushMatrix();
   //  Offset
