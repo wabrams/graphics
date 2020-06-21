@@ -20,4 +20,5 @@ void xzplane(double x, double y, double z, double sx, double sz);
 void yzplane(double x, double y, double z, double sy, double sz);
 // special shapes
 void house(double x, double y, double z, double dx, double dy, double dz, double th, float r, float g, float b);
+void sun(double x, double y, double z, double r, double e, double s, int i);
 #endif //SHAPES_H

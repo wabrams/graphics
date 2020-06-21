@@ -24,7 +24,11 @@ enum viewmode_e
 typedef enum viewmode_e viewmode_t;
 
 ccoord_t p; //1st person pov (player)
-const float sp = 0.05; //speed (for player)
+const float sp   =  0.05; //speed (for player)
+bool  sun_move   = true;
+float sun_dist   =  5;
+float sun_angle  = 90;
+float sun_height =  0.5;
 window_t win;
 view_t v;
 light_t l;
@@ -114,6 +118,39 @@ void display()
       exit(0);
   }
 
+  glShadeModel(l.smooth ? GL_SMOOTH : GL_FLAT);
+
+  if (l.light)
+  {
+    //translate intensity to color vectors
+    float Ambient[]   = {0.01*l.ambient ,0.01*l.ambient ,0.01*l.ambient ,1.0};
+    float Diffuse[]   = {0.01*l.diffuse ,0.01*l.diffuse ,0.01*l.diffuse ,1.0};
+    float Specular[]  = {0.01*l.specular,0.01*l.specular,0.01*l.specular,1.0};
+    //  Light position
+    float Position[]  = {sun_dist*Cos(sun_angle),sun_height,sun_dist*Sin(sun_angle),1.0};
+    //  Draw light position as ball (still no lighting here)
+    glColor3f(1,1,1);
+    sun(Position[0],Position[1],Position[2] , 0.1, l.emission, l.shiny, 1);
+    //  OpenGL should normalize normal vectors
+    glEnable(GL_NORMALIZE);
+    //  Enable lighting
+    glEnable(GL_LIGHTING);
+    //  Location of viewer for specular calculations
+    glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, true);
+    //  glColor sets ambient and diffuse color materials
+    glColorMaterial(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE);
+    glEnable(GL_COLOR_MATERIAL);
+    //  Enable light 0
+    glEnable(GL_LIGHT0);
+    //  Set ambient, diffuse, specular components and position of light 0
+    glLightfv(GL_LIGHT0,GL_AMBIENT ,Ambient);
+    glLightfv(GL_LIGHT0,GL_DIFFUSE ,Diffuse);
+    glLightfv(GL_LIGHT0,GL_SPECULAR,Specular);
+    glLightfv(GL_LIGHT0,GL_POSITION,Position);
+  }
+  else
+    glDisable(GL_LIGHTING);
+
   // enable face culling
   // glEnable(GL_CULL_FACE);
   // glCullFace(GL_BACK);
@@ -128,6 +165,7 @@ void display()
   xzplane(1, 0, 1, 0, 0);
   //  White
   glColor3f(1,1,1);
+  glDisable(GL_LIGHTING);
   //  Draw axes
   if (v.axes)
   {
@@ -178,14 +216,14 @@ void special(int key, int x, int y)
 {
   UNUSED(x);
   UNUSED(y);
-  if (l.light)
-  {
-    switch (key)
-    {
-
-    }
-  }
-  else
+  // if (l.light)
+  // {
+  //   switch (key)
+  //   {
+  //
+  //   }
+  // }
+  // else
     switch (key)
     {
       case GLUT_KEY_UP:
@@ -223,6 +261,9 @@ void key(unsigned char ch, int x, int y)
   {
     switch (ch)
     {
+      case 32: //space bar, pause
+        sun_move = !sun_move;
+        break;
       case 27:
       case 'q':
       case 'Q':
@@ -334,7 +375,9 @@ void key(unsigned char ch, int x, int y)
 // GLUT calls this routine when there is nothing else to do
 void idle()
 {
-   // double t = glutGet(GLUT_ELAPSED_TIME)/1000.0;
+   double t = glutGet(GLUT_ELAPSED_TIME)/1000.0;
+   if (sun_move)
+    sun_angle = fmod(90*t,360.0);
    glutPostRedisplay();
 }
 
