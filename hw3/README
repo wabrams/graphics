@@ -1,0 +1,30 @@
+William Abrams
+CSCI 4229, Summer 2020
+
+My unpolished submission for homework #2.
+
+Time Spent:
+  7 hours, the first submission was rough and unpolished, this one is good to go. the house shapes are somewhat elementary, but hopefully it meets the minimum requirements.
+
+Controls:
+  1          mode 1 shortcut
+  2          mode 2 shortcut
+  3          mode 3 shortcut
+  m/M        change modes
+  t/T        Toggle axes
+  arrows     Change view angle
+  0          Reset view angle + fov
+  ESC/q/Q    Exit
+  i/I        Increase FOV
+  o/O        Decrease FOV
+  =/+        Decrease DIM (zoom in)
+  -/_        Increase DIM (zoom out)
+  a/A        Look right
+  d/D        Look left
+  w/W        Move forwards
+  s/S        Move backwards
+
+
+acknowledgements:
+  example 8 for a lot of the base code
+  https://stackoverflow.com/questions/8074469/how-do-i-correctly-implement-a-basic-first-person-camera-in-opengl
