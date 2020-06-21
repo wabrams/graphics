@@ -5,7 +5,6 @@
 // draws a vertex in polar coordinates
 void Vertex(double th, double ph)
 {
-   glColor3f(Cos(th)*Cos(th) , Sin(ph)*Sin(ph) , Sin(th)*Sin(th));
    glVertex3d(Sin(th)*Cos(ph) , Sin(ph) , Cos(th)*Cos(ph));
 }
 
@@ -287,8 +286,8 @@ void sun(double x,double y,double z,double r, double emission, double shiny, int
    //  Offset, scale and rotate
    glTranslated(x,y,z);
    glScaled(r,r,r);
-   //  White ball
-   glColor3f(1,1,1);
+   //  yellow sphere
+   glColor3f(1,1,0);
    glMaterialf(GL_FRONT,GL_SHININESS,shiny);
    glMaterialfv(GL_FRONT,GL_SPECULAR,yellow);
    glMaterialfv(GL_FRONT,GL_EMISSION,Emission);

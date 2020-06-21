@@ -130,7 +130,7 @@ void display()
     float Position[]  = {sun_dist*Cos(sun_angle),sun_height,sun_dist*Sin(sun_angle),1.0};
     //  Draw light position as ball (still no lighting here)
     glColor3f(1,1,1);
-    sun(Position[0],Position[1],Position[2] , 0.1, l.emission, l.shiny, 1);
+    sun(Position[0] + 0.5,Position[1], Position[2] + 0.5, 0.2, l.emission, l.shiny, 4);
     //  OpenGL should normalize normal vectors
     glEnable(GL_NORMALIZE);
     //  Enable lighting
@@ -273,6 +273,15 @@ void key(unsigned char ch, int x, int y)
       case 'l':
       case 'L':
         l.light = !l.light;
+        break;
+      case '=':
+      case '+':
+        // zoom in
+        if (v.dim > 0) v.dim -= 0.1;
+        break;
+      case '-':
+      case '_':
+        v.dim += 0.1;
         break;
     }
   }
