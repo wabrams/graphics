@@ -9,6 +9,7 @@
 #include <GL/glut.h>
 #endif
 
+#include "loadtexbmp.h"
 #include "shapes.h"
 #include "trig.h"
 #include "structs.h"
@@ -33,6 +34,7 @@ window_t win;
 view_t v;
 light_t l;
 viewmode_t mode = MODE_OVERHEAD_ORTHOGONAL;
+unsigned int texture[3]; //texture ids (wall, grass, roof)
 const char * mtext[] = {"OH_ORTH", "OH_PRSP", "1P_PRSP"};
 
 // reused errcheck function from ex5 in class
@@ -156,13 +158,12 @@ void display()
   // glCullFace(GL_BACK);
   // draw
   glColor3f(1,0,1);
-  house( 0.2, 0.10, 0.3, 0.10, 0.10, 0.10,  0, 0.5, 0.3, 0.3);
-  house(-0.2, 0.16, 0.1, 0.12, 0.16, 0.17, 15, 0.5, 0.5, 0.3);
-  house(-0.6, 0.08,-0.4, 0.13, 0.08, 0.15, 30, 0.2, 0.5, 0.5);
-  house( 0.7, 0.20,-0.3, 0.08, 0.20, 0.13, 45, 0.5, 0.2, 0.5);
-  house(-0.5, 0.23, 0.6, 0.15, 0.23, 0.13, 73, 0.7, 0.7, 0.2);
-  glColor3f(0, 1, 0);
-  xzplane(1, 0, 1, 0, 0);
+  house( 0.2, 0.10, 0.3, 0.10, 0.10, 0.10,  0, 0.5, 0.3, 0.3, texture[0], texture[2]);
+  house(-0.2, 0.16, 0.1, 0.12, 0.16, 0.17, 15, 0.5, 0.5, 0.3, texture[0], texture[2]);
+  house(-0.6, 0.08,-0.4, 0.13, 0.08, 0.15, 30, 0.2, 0.5, 0.5, texture[0], texture[2]);
+  house( 0.7, 0.20,-0.3, 0.08, 0.20, 0.13, 45, 0.5, 0.2, 0.5, texture[0], texture[2]);
+  house(-0.5, 0.23, 0.6, 0.15, 0.23, 0.13, 73, 0.7, 0.7, 0.2, texture[0], texture[2]);
+  xzplane(1, 0, 1, 0, 0, texture[1]);
   //  White
   glColor3f(1,1,1);
   glDisable(GL_LIGHTING);
@@ -189,7 +190,7 @@ void display()
   glWindowPos2i(5,5);
   //  Print the text string
   if (l.light)
-    Print("LGHT: ");
+    Print("LGHT: %s", sun_move?"MOVE":"STOP");
   else
     Print("MOVE: VA=(%d,%d), DIM=%2.2f, FOV=%d [%s]", v.th, v.ph, v.dim, v.fov, mtext[mode]);
   // Check for errors
@@ -424,7 +425,7 @@ int main(int argc,char* argv[])
   glutInitWindowSize(500,500);
   glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
   //  Create the window
-  glutCreateWindow("HW #2 - William Abrams");
+  glutCreateWindow("HW #3 - William Abrams");
   //  Tell GLUT to call "idle" when there is nothing else to do
   glutIdleFunc(idle);
   //  Tell GLUT to call "display" when the scene should be drawn
@@ -435,6 +436,10 @@ int main(int argc,char* argv[])
   glutSpecialFunc(special);
   //  Tell GLUT to call "key" when a key is pressed
   glutKeyboardFunc(key);
+  // Load Textures from Images
+  texture[0] =  LoadTexBMP("wall.bmp");
+  texture[1] =  LoadTexBMP("grass.bmp");
+  texture[2] =  LoadTexBMP("roof.bmp");
   //  Pass control to GLUT so it can interact with the user
   glutMainLoop();
   return 0;

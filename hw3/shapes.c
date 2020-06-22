@@ -1,6 +1,7 @@
 #include "shapes.h"
 #include "trig.h"
 #include "structs.h"
+#include "loadtexbmp.h"
 
 // draws a vertex in polar coordinates
 void Vertex(double th, double ph)
@@ -154,7 +155,7 @@ void xyplane(double x, double y, double z, double sx, double sy)
   glPopMatrix();
 }
 
-void xzplane(double x, double y, double z, double sx, double sz)
+void xzplane(double x, double y, double z, double sx, double sz, unsigned int texture)
 {
   //  Save transformation
   glPushMatrix();
@@ -162,14 +163,19 @@ void xzplane(double x, double y, double z, double sx, double sz)
   glTranslated(sx,y,sz);
   glScaled(x,0,z);
   //  Cube
+  glColor3f(0, 0.7, 0);
+  glEnable(GL_TEXTURE_2D);
+  glTexEnvi(GL_TEXTURE_ENV , GL_TEXTURE_ENV_MODE , GL_MODULATE);
+  glBindTexture(GL_TEXTURE_2D,texture);
   glBegin(GL_QUADS);
   //  Front
-  glVertex3f( 1, y, 1);
-  glVertex3f( 1, y,-1);
-  glVertex3f(-1, y,-1);
-  glVertex3f(-1, y, 1);
+  glTexCoord2f(0.0, 0.0); glVertex3f( 1, y, 1);
+  glTexCoord2f(1.0, 0.0); glVertex3f( 1, y,-1);
+  glTexCoord2f(1.0, 1.0); glVertex3f(-1, y,-1);
+  glTexCoord2f(0.0, 1.0); glVertex3f(-1, y, 1);
   //  End
   glEnd();
+  glDisable(GL_TEXTURE_2D);
   //  Undo transformations
   glPopMatrix();
 }
@@ -194,7 +200,7 @@ void yzplane(double x, double y, double z, double sy, double sz)
   glPopMatrix();
 }
 
-void house(double x, double y, double z, double dx, double dy, double dz, double th, float r, float g, float b)
+void house(double x, double y, double z, double dx, double dy, double dz, double th, float r, float g, float b, unsigned int texture1, unsigned int texture2)
 {
   float shiny = 1;
   float white[] = {1,1,1,1};
@@ -210,67 +216,77 @@ void house(double x, double y, double z, double dx, double dy, double dz, double
   glRotated(th,0,1,0);
   glScaled(dx,dy,dz);
   //  Cube
+  glEnable(GL_TEXTURE_2D);
+  glTexEnvi(GL_TEXTURE_ENV , GL_TEXTURE_ENV_MODE , GL_MODULATE);
+  glBindTexture(GL_TEXTURE_2D, texture1);
   glBegin(GL_QUADS);
   //  Front
   glColor3f(r + 0.1, g + 0.1, b + 0.1);
   //L
-  glVertex3f(-1,-1, 1);
-  glVertex3f(-0.3,-1, 1);
-  glVertex3f(-0.3,+1, 1);
-  glVertex3f(-1,+1, 1);
+  glTexCoord2f(0.0,0.0); glVertex3f(-1,-1, 1);
+  glTexCoord2f(0.3,0.0); glVertex3f(-0.3,-1, 1);
+  glTexCoord2f(0.3,1.0); glVertex3f(-0.3,+1, 1);
+  glTexCoord2f(0.0,1.0); glVertex3f(-1,+1, 1);
   //C
-  glVertex3f(-0.3,0, 1);
-  glVertex3f(0.3,0, 1);
-  glVertex3f(.3,+1, 1);
-  glVertex3f(-.3,+1, 1);
+  glTexCoord2f(0.3,0.5); glVertex3f(-0.3,0, 1);
+  glTexCoord2f(0.6,0.5); glVertex3f(0.3,0, 1);
+  glTexCoord2f(0.6,1.0); glVertex3f(.3,+1, 1);
+  glTexCoord2f(0.3,1.0); glVertex3f(-.3,+1, 1);
   //R
-  glVertex3f(.3,-1, 1);
-  glVertex3f(+1,-1, 1);
-  glVertex3f(+1,+1, 1);
-  glVertex3f(.3,+1, 1);
+  glTexCoord2f(0.6,0.0); glVertex3f(.3,-1, 1);
+  glTexCoord2f(1.0,0.0); glVertex3f(+1,-1, 1);
+  glTexCoord2f(1.0,1.0); glVertex3f(+1,+1, 1);
+  glTexCoord2f(0.6,1.0); glVertex3f(.3,+1, 1);
   //  Back
   glColor3f(r + 0.1, g + 0.1, b - 0.1);
-  glVertex3f(+1,-1,-1);
-  glVertex3f(-1,-1,-1);
-  glVertex3f(-1,+1,-1);
-  glVertex3f(+1,+1,-1);
+  glTexCoord2f(0.0, 0.0); glVertex3f(+1,-1,-1);
+  glTexCoord2f(1.0, 0.0); glVertex3f(-1,-1,-1);
+  glTexCoord2f(1.0, 1.0); glVertex3f(-1,+1,-1);
+  glTexCoord2f(0.0, 1.0); glVertex3f(+1,+1,-1);
   //  Right
   glColor3f(r + 0.1, g - 0.1, b + 0.1);
-  glVertex3f(+1,-1,+1);
-  glVertex3f(+1,-1,-1);
-  glVertex3f(+1,+1,-1);
-  glVertex3f(+1,+1,+1);
+  glTexCoord2f(0.0, 0.0); glVertex3f(+1,-1,+1);
+  glTexCoord2f(1.0, 0.0); glVertex3f(+1,-1,-1);
+  glTexCoord2f(1.0, 1.0); glVertex3f(+1,+1,-1);
+  glTexCoord2f(0.0, 1.0); glVertex3f(+1,+1,+1);
   //  Left
   glColor3f(r + 0.1, g - 0.1, b - 0.1);
-  glVertex3f(-1,-1,-1);
-  glVertex3f(-1,-1,+1);
-  glVertex3f(-1,+1,+1);
-  glVertex3f(-1,+1,-1);
+  glTexCoord2f(0.0, 0.0); glVertex3f(-1,-1,-1);
+  glTexCoord2f(1.0, 0.0); glVertex3f(-1,-1,+1);
+  glTexCoord2f(1.0, 1.0); glVertex3f(-1,+1,+1);
+  glTexCoord2f(0.0, 1.0); glVertex3f(-1,+1,-1);
   //  End
   glEnd();
+  glDisable(GL_TEXTURE_2D);
+
   // Pyramid Roof
+  glEnable(GL_TEXTURE_2D);
+  glTexEnvi(GL_TEXTURE_ENV , GL_TEXTURE_ENV_MODE , GL_MODULATE);
+  glBindTexture(GL_TEXTURE_2D, texture2);
   glBegin(GL_TRIANGLES);
   glColor3f(r - 0.2, g - 0.2, b - 0.2);
-  glVertex3d( 1.25, 1, 1.25);
-  glVertex3d( 1.25, 1,-1.25);
-  glVertex3d(0,1.5,0);
+
+  glTexCoord2f(0.0, 0.0); glVertex3d( 1.25, 1, 1.25);
+  glTexCoord2f(1.0, 0.0); glVertex3d( 1.25, 1,-1.25);
+  glTexCoord2f(0.5, 1.0); glVertex3d(0,1.5,0);
 
   glColor3f(r - 0.2, g - 0.2, b - 0.3);
-  glVertex3d( 1.25, 1, 1.25);
-  glVertex3d(-1.25, 1, 1.25);
-  glVertex3d(0,1.5,0);
+  glTexCoord2f(0.0, 0.0); glVertex3d( 1.25, 1, 1.25);
+  glTexCoord2f(1.0, 0.0); glVertex3d(-1.25, 1, 1.25);
+  glTexCoord2f(0.5, 1.0); glVertex3d(0,1.5,0);
 
   glColor3f(r - 0.2, g - 0.3, b - 0.2);
-  glVertex3d(-1.25, 1, 1.25);
-  glVertex3d(-1.25, 1,-1.25);
-  glVertex3d(0,1.5,0);
+  glTexCoord2f(0.0, 0.0); glVertex3d(-1.25, 1, 1.25);
+  glTexCoord2f(1.0, 0.0); glVertex3d(-1.25, 1,-1.25);
+  glTexCoord2f(0.5, 1.0); glVertex3d(0,1.5,0);
 
   glColor3f(r - 0.3, g - 0.2, b - 0.2);
-  glVertex3d( 1.25, 1,-1.25);
-  glVertex3d(-1.25, 1,-1.25);
-  glVertex3d(0,1.5,0);
+  glTexCoord2f(0.0, 0.0); glVertex3d( 1.25, 1,-1.25);
+  glTexCoord2f(1.0, 0.0); glVertex3d(-1.25, 1,-1.25);
+  glTexCoord2f(0.5, 1.0); glVertex3d(0,1.5,0);
 
   glEnd();
+  glDisable(GL_TEXTURE_2D);
   //  Undo transformations
   glPopMatrix();
 }

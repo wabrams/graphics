@@ -16,9 +16,9 @@ void cuboid(double x,double y,double z, double dx,double dy,double dz, double th
 void sphere1(double x,double y,double z,double r);
 void sphere2(double x,double y,double z,double r);
 void xyplane(double x, double y, double z, double sx, double sy);
-void xzplane(double x, double y, double z, double sx, double sz);
+void xzplane(double x, double y, double z, double sx, double sz, unsigned int t);
 void yzplane(double x, double y, double z, double sy, double sz);
 // special shapes
-void house(double x, double y, double z, double dx, double dy, double dz, double th, float r, float g, float b);
+void house(double x, double y, double z, double dx, double dy, double dz, double th, float r, float g, float b, unsigned int t1, unsigned int t2);
 void sun(double x, double y, double z, double r, double e, double s, int i);
 #endif //SHAPES_H
