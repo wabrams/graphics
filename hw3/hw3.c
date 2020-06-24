@@ -27,7 +27,7 @@ typedef enum viewmode_e viewmode_t;
 ccoord_t p; //1st person pov (player)
 const float sp   =  0.05; //speed (for player)
 bool  sun_move   = true;
-float sun_dist   =  5;
+float sun_dist   =  3;
 float sun_angle  = 90;
 float sun_height =  0.5;
 window_t win;
@@ -283,6 +283,11 @@ void key(unsigned char ch, int x, int y)
       case '-':
       case '_':
         v.dim += 0.1;
+        break;
+      case 't':
+      case 'T':
+        // toggle axes
+        v.axes = !v.axes;
         break;
     }
   }

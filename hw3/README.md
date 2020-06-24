@@ -8,11 +8,18 @@ Submission for HW#3.
 # Time Spent:
 
   about 5 hours, not including time messing with example code
+  corrections: 1 hour, added more controls to lighting mode, fixed make warnings
 
 # Lighting Mode Controls:
 
   l/L       switch to move mode
   ESC/q/Q   exit program
+  SPACE     pause the light
+  arrows    Change view angle
+  =/+       Decrease DIM (zoom in)
+  -/_       Increase DIM (zoom out)
+  t/T       Toggle axes
+
 
 # Move Mode Controls:
 

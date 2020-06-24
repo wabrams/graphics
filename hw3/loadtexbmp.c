@@ -42,7 +42,7 @@ static void ErrCheck(const char* where)
 /*
  *  Load texture from BMP file
  */
-unsigned int LoadTexBMP(const char* file)
+unsigned int LoadTexBMP(const char * file)
 {
    unsigned int   texture;    // Texture name
    FILE*          f;          // File pointer
@@ -77,8 +77,8 @@ unsigned int LoadTexBMP(const char* file)
    }
    //  Check image parameters
    glGetIntegerv(GL_MAX_TEXTURE_SIZE,&max);
-   if (dx<1 || dx>max) Fatal("%s image width %d out of range 1-%d\n",file,dx,max);
-   if (dy<1 || dy>max) Fatal("%s image height %d out of range 1-%d\n",file,dy,max);
+   if (dx<1 || dx>(unsigned int)max) Fatal("%s image width %d out of range 1-%d\n",file,dx,max);
+   if (dy<1 || dy>(unsigned int)max) Fatal("%s image height %d out of range 1-%d\n",file,dy,max);
    if (nbp!=1)  Fatal("%s bit planes is not 1: %d\n",file,nbp);
    if (bpp!=24) Fatal("%s bits per pixel is not 24: %d\n",file,bpp);
    if (k!=0)    Fatal("%s compressed files not supported\n",file);
