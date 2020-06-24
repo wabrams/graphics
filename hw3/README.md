@@ -19,7 +19,8 @@ Submission for HW#3.
   =/+       Decrease DIM (zoom in)
   -/_       Increase DIM (zoom out)
   t/T       Toggle axes
-
+  a/A       move the light, counterclockwise 
+  d/D       move the light, clockwise
 
 # Move Mode Controls:
 
