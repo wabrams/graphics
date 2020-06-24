@@ -29,7 +29,7 @@ const float sp   =  0.05; //speed (for player)
 bool  sun_move   = true;
 float sun_dist   =  3;
 float sun_angle  = 90;
-float sun_height =  0.5;
+float sun_height =  2.5;
 window_t win;
 view_t v;
 light_t l;
@@ -288,6 +288,16 @@ void key(unsigned char ch, int x, int y)
       case 'T':
         // toggle axes
         v.axes = !v.axes;
+        break;
+      case 'd':
+      case 'D':
+        if (!sun_move)
+          sun_angle = fmod(sun_angle + 2, 360.0);
+        break;
+      case 'a':
+      case 'A':
+        if (!sun_move)
+          sun_angle = fmod(sun_angle - 2, 360.0);
         break;
     }
   }
