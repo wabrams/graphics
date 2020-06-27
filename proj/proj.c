@@ -11,18 +11,23 @@
 #endif
 
 #include "framework.h"
+#include "portal.h"
+
+#define SHOW_AXES 1
 
 #define Cos(x) (cos((x)*3.1415927/180))
 #define Sin(x) (sin((x)*3.1415927/180))
 #define Tan(x) (tan((x)*3.1415927/180))
 #define UNUSED(x) (void)(x)
 
+#define NUMBER_PORTALS 2
 #define BUFF_WRITE_LEN 8192
 #define PROJECT_FONT GLUT_BITMAP_8_BY_13 //alt: GLUT_BITMAP_HELVETICA_12
 
 window_t w;
 view_t v;
 player_t p;
+portal_t portals[NUMBER_PORTALS];
 
 void check(const char * where)
 {
@@ -44,6 +49,8 @@ void write(float x, float y, float z, const char * format, ...)
 
   while (*next)
     glutBitmapCharacter(PROJECT_FONT, *next++);
+
+  check("func-write");
 }
 
 void info(int x, int y, const char * format, ...)
@@ -60,6 +67,8 @@ void info(int x, int y, const char * format, ...)
 
   while (*next)
     glutBitmapCharacter(PROJECT_FONT, *next++);
+
+  check("func-info");
 }
 
 void projection()
@@ -69,6 +78,7 @@ void projection()
 
   gluPerspective(v.fov, w.asp, v.dim / 4, 4 * v.dim);
 
+  check("func-projection");
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 }
@@ -79,6 +89,7 @@ void reshape(int width, int height)
   w.asp = 1.0 * width / height;
 
   glViewport(0, 0, width, height);
+  check("func-reshape");
   projection();
 }
 void display()
@@ -91,20 +102,33 @@ void display()
   glRotatef(p.yaw,   0, 2, 0);
   glTranslatef(-p.x, -p.y, -p.z);
 
+  glEnable(GL_CULL_FACE);
   glShadeModel(GL_SMOOTH);
 
-  glBegin(GL_LINES);
-  glVertex3d(0, 0, 0);
-  glVertex3d(1, 0, 0);
-  glVertex3d(0, 0, 0);
-  glVertex3d(0, 1, 0);
-  glVertex3d(0, 0, 0);
-  glVertex3d(0, 0, 1);
+  glBegin(GL_QUADS);
+  for (int i = 0; i < 1; i++) //TODO: run to NUMBER_PORTALS
+  {
+    glColor3ub(portals[i].color.r, portals[i].color.g, portals[i].color.b);
+    for (int j = 0; j < 4; j++)
+      glVertex3d(portals[i].vertices[j].x, portals[i].vertices[j].y, portals[i].vertices[j].z);
+  }
   glEnd();
 
-  write(1, 0, 0, "X");
-  write(0, 1, 0, "Y");
-  write(0, 0, 1, "Z");
+  #if SHOW_AXES
+    glColor3f(1, 1, 1);
+    glBegin(GL_LINES);
+    glVertex3d(0, 0, 0);
+    glVertex3d(1, 0, 0);
+    glVertex3d(0, 0, 0);
+    glVertex3d(0, 1, 0);
+    glVertex3d(0, 0, 0);
+    glVertex3d(0, 0, 1);
+    glEnd();
+
+    write(1, 0, 0, "X");
+    write(0, 1, 0, "Y");
+    write(0, 0, 1, "Z");
+  #endif
 
   info(5, 5, "this is a test");
 
@@ -119,25 +143,34 @@ void keyboard(unsigned char k, int x, int y)
 
   switch (k)
   {
+    case 27:
+    case 'Q':
+    case 'q':
+      exit(0);
+      break;
     case 'W':
     case 'w':
-      p.x += p.speed *  Sin(p.yaw);
-      p.z += p.speed * -Cos(p.yaw);
+      p.x += p.speed * Sin(p.yaw);
+      p.z -= p.speed * Cos(p.yaw);
       break;
     case 'A':
     case 'a':
+      p.x -= p.speed * Sin(p.yaw + 90);
+      p.z += p.speed * Cos(p.yaw + 90);
       break;
     case 's':
     case 'S':
-      p.x += p.speed * -Sin(p.yaw);
-      p.z += p.speed *  Cos(p.yaw);
+      p.x -= p.speed * Sin(p.yaw);
+      p.z += p.speed * Cos(p.yaw);
       break;
     case 'D':
     case 'd':
-
+      p.x -= p.speed * Sin(p.yaw - 90);
+      p.z += p.speed * Cos(p.yaw - 90);
       break;
   }
 
+  check("func-keyboard");
   glutPostRedisplay();
 }
 void special(int k, int x, int y)
@@ -169,6 +202,7 @@ void special(int k, int x, int y)
       break;
   }
 
+  check("func-special");
   glutPostRedisplay();
 }
 void idle()
@@ -179,10 +213,21 @@ void idle()
 int main(int argc,char* argv[])
 {
   w.width = w.height = 500;
+
   p.x = p.z = 1;
-  p.y = 0;
+  p.y = 0.5;
   p.pitch = p.yaw = 0;
   p.speed = 0.05;
+
+  v.th = v.ph = 0; //unused for now, not until 3P POV
+  v.dim = 1;
+  v.fov = 50;
+
+  portals[0].color       = (color_t) {0x00, 0x00, 0xFF};
+  portals[0].vertices[0] = (vertex_t){0, 0, 0};
+  portals[0].vertices[1] = (vertex_t){1, 0, 0};
+  portals[0].vertices[2] = (vertex_t){1, 1, 0};
+  portals[0].vertices[3] = (vertex_t){0, 1, 0};
 
   glutInit(&argc,argv);
   glutInitWindowSize(500,500);
