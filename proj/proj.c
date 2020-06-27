@@ -15,11 +15,6 @@
 
 #define SHOW_AXES 1
 
-#define Cos(x) (cos((x)*3.1415927/180))
-#define Sin(x) (sin((x)*3.1415927/180))
-#define Tan(x) (tan((x)*3.1415927/180))
-#define UNUSED(x) (void)(x)
-
 #define NUMBER_PORTALS 2
 #define BUFF_WRITE_LEN 8192
 #define PROJECT_FONT GLUT_BITMAP_8_BY_13 //alt: GLUT_BITMAP_HELVETICA_12
@@ -28,12 +23,6 @@ window_t w;
 view_t v;
 player_t p;
 portal_t portals[NUMBER_PORTALS];
-
-void check(const char * where)
-{
-  int err = glGetError();
-  if (err) fprintf(stderr, "ERROR: %s [%s]\n", gluErrorString(err), where);
-}
 
 void write(float x, float y, float z, const char * format, ...)
 {
@@ -106,7 +95,7 @@ void display()
   glShadeModel(GL_SMOOTH);
 
   glBegin(GL_QUADS);
-  for (int i = 0; i < 1; i++) //TODO: run to NUMBER_PORTALS
+  for (int i = 0; i < NUMBER_PORTALS; i++)
   {
     glColor3ub(portals[i].color.r, portals[i].color.g, portals[i].color.b);
     for (int j = 0; j < 4; j++)
@@ -228,6 +217,12 @@ int main(int argc,char* argv[])
   portals[0].vertices[1] = (vertex_t){1, 0, 0};
   portals[0].vertices[2] = (vertex_t){1, 1, 0};
   portals[0].vertices[3] = (vertex_t){0, 1, 0};
+
+  portals[1].color       = (color_t) {0xFF, 0xAB, 0x00};
+  portals[1].vertices[0] = (vertex_t){2, 0, 0};
+  portals[1].vertices[1] = (vertex_t){3, 0, 0};
+  portals[1].vertices[2] = (vertex_t){3, 1, 0};
+  portals[1].vertices[3] = (vertex_t){2, 1, 0};
 
   glutInit(&argc,argv);
   glutInitWindowSize(500,500);

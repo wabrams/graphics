@@ -1,6 +1,6 @@
 # homework 1
 EXEC = run
-SRCS = proj.c
+SRCS = proj.c framework.c
 COMP = gcc
 CFLG = -O3 -Wall -Wextra
 LIBS = -lglut -lGLU -lGL -lm
