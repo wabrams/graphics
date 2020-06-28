@@ -54,9 +54,9 @@ struct light_s
 
 struct color_s
 {
-  int r;
-  int g;
-  int b;
+  unsigned int r: 8;
+  unsigned int g: 8;
+  unsigned int b: 8;
 };
 
 typedef struct window_s window_t;
