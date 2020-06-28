@@ -13,13 +13,23 @@
 #include "shapes.h"
 #include "framework.h"
 
+#define NUM_TEXTURES 1
+const char * texture_filepaths[] = {"wall.bmp"};
+unsigned int textures[NUM_TEXTURES];
+
+void loadTextures()
+{
+  for (int i = 0; i < NUM_TEXTURES; i++)
+    textures[i] = loadTextureFromBMP(texture_filepaths[i]);
+}
+
 void drawCuboid(cuboid_t * c)
 {
   glPushMatrix();
   // offset
   glTranslatef(c -> x, c -> y, c -> z); //TODO: translatef vs rotatef
   glRotatef(c -> th, 0, 1, 0);
-  glScaled(c -> dimx, c -> dimy, c -> dimz);
+  glScalef(c -> dimx, c -> dimy, c -> dimz);
   // draw
   glBegin(GL_QUADS);
   // front
@@ -60,5 +70,118 @@ void drawCuboid(cuboid_t * c)
   glVertex3f(-1,-1,+1);
   // end
   glEnd();
+  glPopMatrix();
+}
+
+
+void drawGrid(grid_t * g)
+{
+  // get to the current grid
+  glPushMatrix();
+  glTranslated(g -> x, g -> y, g -> z);
+
+  // draw the floor
+  glBegin(GL_QUADS);
+  // white (intersections)
+  glColor3ub(0xFF, 0xFF, 0xFF);
+    //top-left
+    glVertex3f(0.0, 0.0, 0.0);
+    glVertex3f(0.0, 0.0, 0.1);
+    glVertex3f(0.1, 0.0, 0.1);
+    glVertex3f(0.1, 0.0, 0.0);
+    //bottom-left
+    glVertex3f(0.0, 0.0, 0.9);
+    glVertex3f(0.0, 0.0, 1.0);
+    glVertex3f(0.1, 0.0, 1.0);
+    glVertex3f(0.1, 0.0, 0.9);
+    //bottom-right
+    glVertex3f(0.9, 0.0, 0.9);
+    glVertex3f(0.9, 0.0, 1.0);
+    glVertex3f(1.0, 0.0, 1.0);
+    glVertex3f(1.0, 0.0, 0.9);
+    //top-right
+    glVertex3f(0.9, 0.0, 0.0);
+    glVertex3f(0.9, 0.0, 0.1);
+    glVertex3f(1.0, 0.0, 0.1);
+    glVertex3f(1.0, 0.0, 0.0);
+  // gray (roads)
+  glColor3ub(0xAA, 0xAA, 0xAA);
+    //up
+    glVertex3f(0.1, 0.0, 0.0);
+    glVertex3f(0.1, 0.0, 0.1);
+    glVertex3f(0.9, 0.0, 0.1);
+    glVertex3f(0.9, 0.0, 0.0);
+    //left
+    glVertex3f(0.0, 0.0, 0.1);
+    glVertex3f(0.0, 0.0, 0.9);
+    glVertex3f(0.1, 0.0, 0.9);
+    glVertex3f(0.1, 0.0, 0.1);
+    //down
+    glVertex3f(0.1, 0.0, 0.9);
+    glVertex3f(0.1, 0.0, 1.0);
+    glVertex3f(0.9, 0.0, 1.0);
+    glVertex3f(0.9, 0.0, 0.9);
+    //right
+    glVertex3f(0.9, 0.0, 0.1);
+    glVertex3f(0.9, 0.0, 0.9);
+    glVertex3f(1.0, 0.0, 0.9);
+    glVertex3f(1.0, 0.0, 0.1);
+  // green (grass)
+  glColor3ub(0x00, 0xAA, 0x00);
+  glVertex3f(0.1, 0.0, 0.1);
+  glVertex3f(0.1, 0.0, 0.9);
+  glVertex3f(0.9, 0.0, 0.9);
+  glVertex3f(0.9, 0.0, 0.1);
+  glEnd();
+
+  //generate the house per this grid
+  color_t hcolor = (color_t){0xFF, 0x33, 0x82};
+  glColor3ub(hcolor.r, hcolor.g, hcolor.b);
+
+  glTranslated(0.5, 0.05, 0.5);
+  glScalef(0.05, 0.05, 0.05);
+  glEnable(GL_TEXTURE_2D);
+  glTexEnvi(GL_TEXTURE_ENV , GL_TEXTURE_ENV_MODE , GL_MODULATE);
+  glBindTexture(GL_TEXTURE_2D, textures[0]);
+  glBegin(GL_QUADS);
+
+  glNormal3f(0, 0, 1);
+  glTexCoord2f(0.0,0.0); glVertex3f(-1,-1, 1);
+  glTexCoord2f(0.3,0.0); glVertex3f(-0.3,-1, 1);
+  glTexCoord2f(0.3,1.0); glVertex3f(-0.3,+1, 1);
+  glTexCoord2f(0.0,1.0); glVertex3f(-1,+1, 1);
+  //C
+  glNormal3f(0, 0, 1);
+  glTexCoord2f(0.3,0.5); glVertex3f(-0.3,0, 1);
+  glTexCoord2f(0.6,0.5); glVertex3f(0.3,0, 1);
+  glTexCoord2f(0.6,1.0); glVertex3f(.3,+1, 1);
+  glTexCoord2f(0.3,1.0); glVertex3f(-.3,+1, 1);
+  //R
+  glNormal3f(0, 0, 1);
+  glTexCoord2f(0.6,0.0); glVertex3f(.3,-1, 1);
+  glTexCoord2f(1.0,0.0); glVertex3f(+1,-1, 1);
+  glTexCoord2f(1.0,1.0); glVertex3f(+1,+1, 1);
+  glTexCoord2f(0.6,1.0); glVertex3f(.3,+1, 1);
+  //  Back
+  glNormal3f(0, 0, -1);
+  glTexCoord2f(0.0, 0.0); glVertex3f(+1,-1,-1);
+  glTexCoord2f(1.0, 0.0); glVertex3f(-1,-1,-1);
+  glTexCoord2f(1.0, 1.0); glVertex3f(-1,+1,-1);
+  glTexCoord2f(0.0, 1.0); glVertex3f(+1,+1,-1);
+  //  Right
+  glNormal3f(1, 0, 0);
+  glTexCoord2f(0.0, 0.0); glVertex3f(+1,-1,+1);
+  glTexCoord2f(1.0, 0.0); glVertex3f(+1,-1,-1);
+  glTexCoord2f(1.0, 1.0); glVertex3f(+1,+1,-1);
+  glTexCoord2f(0.0, 1.0); glVertex3f(+1,+1,+1);
+  //  Left
+  glNormal3f(-1, 0, 0);
+  glTexCoord2f(0.0, 0.0); glVertex3f(-1,-1,-1);
+  glTexCoord2f(1.0, 0.0); glVertex3f(-1,-1,+1);
+  glTexCoord2f(1.0, 1.0); glVertex3f(-1,+1,+1);
+  glTexCoord2f(0.0, 1.0); glVertex3f(-1,+1,-1);
+  // end
+  glEnd();
+  glDisable(GL_TEXTURE_2D);
   glPopMatrix();
 }

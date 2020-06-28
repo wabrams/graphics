@@ -119,3 +119,10 @@ unsigned int loadTextureFromBMP(const char * file)
   //  Return texture name
   return texture;
 }
+
+void getCurrentGrid(vertex_t * v, grid_t * g)
+{
+  g -> x = (int) ((v -> x < 0)? (v -> x - 1): (v -> x));
+  g -> y = (int) ((v -> y < 0)? (v -> y - 1): (v -> y));
+  g -> z = (int) ((v -> z < 0)? (v -> z - 1): (v -> z));
+}

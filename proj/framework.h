@@ -40,20 +40,18 @@ typedef struct vertex_st
   float x, y, z;
 } vertex_t;
 
-typedef enum cubefaces_en
+typedef struct grid_st
 {
-  CUBE_FACE_TOP,
-  CUBE_FACE_BOTTOM,
-  CUBE_FACE_FRONT,
-  CUBE_FACE_BACK,
-  CUBE_FACE_LEFT,
-  CUBE_FACE_RIGHT,
-} cubefaces_t;
+  int x, y, z;
+} grid_t;
 
 //handled in framework.c
 void check(const char * where);
 void fatal(const char * format, ...);
+
 void reverseBytes(void *, const int n);
 unsigned int loadTextureFromBMP(const char * file);
+
+void getCurrentGrid(vertex_t * v, grid_t * g);
 
 #endif // FRAMEWORK_H

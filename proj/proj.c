@@ -11,7 +11,6 @@
 #endif
 
 #include "framework.h"
-#include "portal.h"
 #include "shapes.h"
 
 #define SHOW_AXES 1
@@ -24,8 +23,8 @@
 window_t w;
 view_t v;
 player_t p;
-portal_t portals[NUMBER_PORTALS];
-cuboid_t cuboids[NUMBER_CUBOIDS];
+cuboid_t car;
+grid_t g;
 
 void write(float x, float y, float z, const char * format, ...)
 {
@@ -92,24 +91,15 @@ void display()
 
   glRotatef(p.pitch, 1, 0, 0);
   glRotatef(p.yaw,   0, 2, 0);
-  glTranslatef(-p.x, -p.y, -p.z);
+  glTranslatef(-car.x - p.x, -car.y - p.y, -car.z - p.z);
 
   glEnable(GL_CULL_FACE);
   glShadeModel(GL_SMOOTH);
 
   //draw cubes
-  for (int i = 0; i < 1; i++)
-    drawCuboid(&cuboids[i]);
-
-  //draw portals
-  glBegin(GL_QUADS);
-  for (int i = 0; i < NUMBER_PORTALS; i++)
-  {
-    glColor3ub(portals[i].color.r, portals[i].color.g, portals[i].color.b);
-    for (int j = 0; j < 4; j++)
-      glVertex3d(portals[i].vertices[j].x, portals[i].vertices[j].y, portals[i].vertices[j].z);
-  }
-  glEnd();
+  drawCuboid(&car);
+  //TODO: eventually draw grid surrounding the area
+  drawGrid(&g);
 
   #if SHOW_AXES
     glColor3f(1, 1, 1);
@@ -127,7 +117,7 @@ void display()
     write(0, 0, 1, "Z");
   #endif
 
-  info(5, 5, "this is a test");
+  info(5, 5, "GRID: (%3d, %3d, %3d)", g.x, g.y, g.z);
 
   check("func-display");
   glFlush();
@@ -147,23 +137,23 @@ void keyboard(unsigned char k, int x, int y)
       break;
     case 'W':
     case 'w':
-      p.x += p.speed * Sin(p.yaw);
-      p.z -= p.speed * Cos(p.yaw);
+      car.x += p.speed * Sin(p.yaw);
+      car.z -= p.speed * Cos(p.yaw);
       break;
     case 'A':
     case 'a':
-      p.x -= p.speed * Sin(p.yaw + 90);
-      p.z += p.speed * Cos(p.yaw + 90);
+      car.x -= p.speed * Sin(p.yaw + 90);
+      car.z += p.speed * Cos(p.yaw + 90);
       break;
     case 's':
     case 'S':
-      p.x -= p.speed * Sin(p.yaw);
-      p.z += p.speed * Cos(p.yaw);
+      car.x -= p.speed * Sin(p.yaw);
+      car.z += p.speed * Cos(p.yaw);
       break;
     case 'D':
     case 'd':
-      p.x -= p.speed * Sin(p.yaw - 90);
-      p.z += p.speed * Cos(p.yaw - 90);
+      car.x -= p.speed * Sin(p.yaw - 90);
+      car.z += p.speed * Cos(p.yaw - 90);
       break;
   }
 
@@ -204,14 +194,19 @@ void special(int k, int x, int y)
 }
 void idle()
 {
-
+  double t = glutGet(GLUT_ELAPSED_TIME)/1000.0;
+  car.th = fmod(90*t,360.0);
+  vertex_t cloc = (vertex_t){car.x, car.y, car.z};
+  getCurrentGrid(&cloc, &g);
+  glutPostRedisplay();
 }
 
 int main(int argc,char* argv[])
 {
   w.width = w.height = 500;
 
-  p.x = p.z = 1;
+  p.x = 0;
+  p.z = 1;
   p.y = 0.5;
   p.pitch = p.yaw = 0;
   p.speed = 0.05;
@@ -220,27 +215,15 @@ int main(int argc,char* argv[])
   v.dim = 1;
   v.fov = 50;
 
-  portals[0].color       = (color_t) {0x00, 0x00, 0xFF};
-  portals[0].vertices[0] = (vertex_t){0, 0, 0};
-  portals[0].vertices[1] = (vertex_t){1, 0, 0};
-  portals[0].vertices[2] = (vertex_t){1, 1, 0};
-  portals[0].vertices[3] = (vertex_t){0, 1, 0};
-
-  portals[1].color       = (color_t) {0xFF, 0xAB, 0x00};
-  portals[1].vertices[0] = (vertex_t){2, 0, 0};
-  portals[1].vertices[1] = (vertex_t){3, 0, 0};
-  portals[1].vertices[2] = (vertex_t){3, 1, 0};
-  portals[1].vertices[3] = (vertex_t){2, 1, 0};
-
-  cuboids[0].x = cuboids[0].y = cuboids[0].z = 0.5;
-  cuboids[0].dimx = cuboids[0].dimy = cuboids[0].dimz = 0.1;
-  cuboids[0].th = 0;
-  cuboids[0].colors[0] = (color_t) {0xFF, 0x00, 0x00};
-  cuboids[0].colors[1] = (color_t) {0x00, 0xFF, 0xFF};
-  cuboids[0].colors[2] = (color_t) {0xFF, 0xFF, 0x00};
-  cuboids[0].colors[3] = (color_t) {0x00, 0xFF, 0x00};
-  cuboids[0].colors[4] = (color_t) {0x00, 0x00, 0xFF};
-  cuboids[0].colors[5] = (color_t) {0xFF, 0x00, 0xFF};
+  car.x = car.y = car.z = 0;
+  car.dimx = car.dimy = car.dimz = 0.1;
+  car.th = 0;
+  car.colors[0] = (color_t) {0xFF, 0x00, 0x00};
+  car.colors[1] = (color_t) {0x00, 0xFF, 0xFF};
+  car.colors[2] = (color_t) {0xFF, 0xFF, 0x00};
+  car.colors[3] = (color_t) {0x00, 0xFF, 0x00};
+  car.colors[4] = (color_t) {0x00, 0x00, 0xFF};
+  car.colors[5] = (color_t) {0xFF, 0x00, 0xFF};
 
   glutInit(&argc,argv);
   glutInitWindowSize(500,500);
@@ -251,6 +234,9 @@ int main(int argc,char* argv[])
   glutReshapeFunc(reshape);
   glutKeyboardFunc(keyboard);
   glutSpecialFunc(special);
+
+  loadTextures();
+
   glutMainLoop();
   return 0;
 }
