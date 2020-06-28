@@ -13,8 +13,8 @@
 #include "shapes.h"
 #include "framework.h"
 
-#define NUM_TEXTURES 1
-const char * texture_filepaths[] = {"wall.bmp"};
+#define NUM_TEXTURES 2
+const char * texture_filepaths[] = {"wall.bmp", "roof.bmp"};
 unsigned int textures[NUM_TEXTURES];
 
 void loadTextures()
@@ -76,6 +76,8 @@ void drawCuboid(cuboid_t * c)
 
 void drawGrid(grid_t * g)
 {
+  srand(pow(2, g -> x) + pow(2, g -> y) + pow(2, g -> z));
+
   // get to the current grid
   glPushMatrix();
   glTranslated(g -> x, g -> y, g -> z);
@@ -135,7 +137,10 @@ void drawGrid(grid_t * g)
   glEnd();
 
   //generate the house per this grid
-  color_t hcolor = (color_t){0xFF, 0x33, 0x82};
+  color_t hcolor;
+  hcolor.r = rand() % 0xFF;
+  hcolor.g = rand() % 0xFF;
+  hcolor.b = rand() % 0xFF;
   glColor3ub(hcolor.r, hcolor.g, hcolor.b);
 
   glTranslated(0.5, 0.05, 0.5);
@@ -182,6 +187,34 @@ void drawGrid(grid_t * g)
   glTexCoord2f(0.0, 1.0); glVertex3f(-1,+1,-1);
   // end
   glEnd();
+
+  glBindTexture(GL_TEXTURE_2D, textures[1]);
+  glBegin(GL_TRIANGLES);
+  // Right
+  glColor3ub(0x77, 0x77 , 0x77);
+
+  glNormal3f(0.37, 0.93, 0);
+  glTexCoord2f(0.0, 0.0); glVertex3d( 1.25, 1, 1.25);
+  glTexCoord2f(1.0, 0.0); glVertex3d( 1.25, 1,-1.25);
+  glTexCoord2f(0.5, 1.0); glVertex3d(0,1.5,0);
+  // Front
+  glNormal3f(0, 0.93, 0.37);
+  glTexCoord2f(0.0, 0.0); glVertex3d( 1.25, 1, 1.25);
+  glTexCoord2f(1.0, 0.0); glVertex3d(-1.25, 1, 1.25);
+  glTexCoord2f(0.5, 1.0); glVertex3d(0,1.5,0);
+  // Left
+  glNormal3f(-0.37, 0.93, 0);
+  glTexCoord2f(0.0, 0.0); glVertex3d(-1.25, 1, 1.25);
+  glTexCoord2f(1.0, 0.0); glVertex3d(-1.25, 1,-1.25);
+  glTexCoord2f(0.5, 1.0); glVertex3d(0,1.5,0);
+  // Back
+  glNormal3f(0, 0.93, -0.37);
+  glTexCoord2f(0.0, 0.0); glVertex3d( 1.25, 1,-1.25);
+  glTexCoord2f(1.0, 0.0); glVertex3d(-1.25, 1,-1.25);
+  glTexCoord2f(0.5, 1.0); glVertex3d(0,1.5,0);
+
+  glEnd();
   glDisable(GL_TEXTURE_2D);
+
   glPopMatrix();
 }

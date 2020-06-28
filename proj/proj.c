@@ -14,8 +14,8 @@
 #include "shapes.h"
 
 #define SHOW_AXES 1
+#define SHOW_RD   10 //render distance
 
-#define NUMBER_PORTALS 2
 #define NUMBER_CUBOIDS 2
 #define BUFF_WRITE_LEN 8192
 #define PROJECT_FONT GLUT_BITMAP_8_BY_13 //alt: GLUT_BITMAP_HELVETICA_12
@@ -93,13 +93,18 @@ void display()
   glRotatef(p.yaw,   0, 2, 0);
   glTranslatef(-car.x - p.x, -car.y - p.y, -car.z - p.z);
 
-  glEnable(GL_CULL_FACE);
+  // glEnable(GL_CULL_FACE);
   glShadeModel(GL_SMOOTH);
 
   //draw cubes
   drawCuboid(&car);
   //TODO: eventually draw grid surrounding the area
-  drawGrid(&g);
+  for (int i = -SHOW_RD; i < SHOW_RD; i++)
+    for (int j = -SHOW_RD; j < SHOW_RD; j++)
+    {
+      grid_t t = (grid_t){g.x + i, g.y, g.z + j};
+      drawGrid(&t);
+    }
 
   #if SHOW_AXES
     glColor3f(1, 1, 1);
