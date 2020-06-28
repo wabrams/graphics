@@ -93,7 +93,7 @@ void display()
   glRotatef(p.yaw,   0, 2, 0);
   glTranslatef(-car.x - p.x, -car.y - p.y, -car.z - p.z);
 
-  // glEnable(GL_CULL_FACE);
+  glEnable(GL_CULL_FACE);
   glShadeModel(GL_SMOOTH);
 
   //draw cubes

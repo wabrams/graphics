@@ -14,7 +14,7 @@
 #include "framework.h"
 
 #define NUM_TEXTURES 2
-const char * texture_filepaths[] = {"wall.bmp", "roof.bmp"};
+const char * texture_filepaths[] = {"wall.bmp", "roof.bmp", "road.bmp"};
 unsigned int textures[NUM_TEXTURES];
 
 void loadTextures()
@@ -73,10 +73,9 @@ void drawCuboid(cuboid_t * c)
   glPopMatrix();
 }
 
-
 void drawGrid(grid_t * g)
 {
-  srand(pow(2, g -> x) + pow(2, g -> y) + pow(2, g -> z));
+  srand((g -> x << 16) + (g -> z));
 
   // get to the current grid
   glPushMatrix();
@@ -130,88 +129,75 @@ void drawGrid(grid_t * g)
     glVertex3f(1.0, 0.0, 0.1);
   // green (grass)
   glColor3ub(0x00, 0xAA, 0x00);
-  glVertex3f(0.1, 0.0, 0.1);
-  glVertex3f(0.1, 0.0, 0.9);
-  glVertex3f(0.9, 0.0, 0.9);
-  glVertex3f(0.9, 0.0, 0.1);
+    glVertex3f(0.1, 0.0, 0.1);
+    glVertex3f(0.1, 0.0, 0.9);
+    glVertex3f(0.9, 0.0, 0.9);
+    glVertex3f(0.9, 0.0, 0.1);
   glEnd();
 
   //generate the house per this grid
   color_t hcolor;
-  hcolor.r = rand() % 0xFF;
-  hcolor.g = rand() % 0xFF;
-  hcolor.b = rand() % 0xFF;
+  hcolor.r = rand();
+  hcolor.g = rand();
+  hcolor.b = rand();
   glColor3ub(hcolor.r, hcolor.g, hcolor.b);
 
-  glTranslated(0.5, 0.05, 0.5);
-  glScalef(0.05, 0.05, 0.05);
+  glTranslated(0.5, 0.0, 0.5);
+  glScalef(0.2, 0.2, 0.2);
   glEnable(GL_TEXTURE_2D);
   glTexEnvi(GL_TEXTURE_ENV , GL_TEXTURE_ENV_MODE , GL_MODULATE);
   glBindTexture(GL_TEXTURE_2D, textures[0]);
   glBegin(GL_QUADS);
-
-  glNormal3f(0, 0, 1);
-  glTexCoord2f(0.0,0.0); glVertex3f(-1,-1, 1);
-  glTexCoord2f(0.3,0.0); glVertex3f(-0.3,-1, 1);
-  glTexCoord2f(0.3,1.0); glVertex3f(-0.3,+1, 1);
-  glTexCoord2f(0.0,1.0); glVertex3f(-1,+1, 1);
-  //C
-  glNormal3f(0, 0, 1);
-  glTexCoord2f(0.3,0.5); glVertex3f(-0.3,0, 1);
-  glTexCoord2f(0.6,0.5); glVertex3f(0.3,0, 1);
-  glTexCoord2f(0.6,1.0); glVertex3f(.3,+1, 1);
-  glTexCoord2f(0.3,1.0); glVertex3f(-.3,+1, 1);
-  //R
-  glNormal3f(0, 0, 1);
-  glTexCoord2f(0.6,0.0); glVertex3f(.3,-1, 1);
-  glTexCoord2f(1.0,0.0); glVertex3f(+1,-1, 1);
-  glTexCoord2f(1.0,1.0); glVertex3f(+1,+1, 1);
-  glTexCoord2f(0.6,1.0); glVertex3f(.3,+1, 1);
-  //  Back
-  glNormal3f(0, 0, -1);
-  glTexCoord2f(0.0, 0.0); glVertex3f(+1,-1,-1);
-  glTexCoord2f(1.0, 0.0); glVertex3f(-1,-1,-1);
-  glTexCoord2f(1.0, 1.0); glVertex3f(-1,+1,-1);
-  glTexCoord2f(0.0, 1.0); glVertex3f(+1,+1,-1);
-  //  Right
-  glNormal3f(1, 0, 0);
-  glTexCoord2f(0.0, 0.0); glVertex3f(+1,-1,+1);
-  glTexCoord2f(1.0, 0.0); glVertex3f(+1,-1,-1);
-  glTexCoord2f(1.0, 1.0); glVertex3f(+1,+1,-1);
-  glTexCoord2f(0.0, 1.0); glVertex3f(+1,+1,+1);
-  //  Left
-  glNormal3f(-1, 0, 0);
-  glTexCoord2f(0.0, 0.0); glVertex3f(-1,-1,-1);
-  glTexCoord2f(1.0, 0.0); glVertex3f(-1,-1,+1);
-  glTexCoord2f(1.0, 1.0); glVertex3f(-1,+1,+1);
-  glTexCoord2f(0.0, 1.0); glVertex3f(-1,+1,-1);
-  // end
+    // left wall
+    glNormal3d(1, 0, 0);
+    glTexCoord2f(0.0,0.0); glVertex3f(0.1, 0.0, 0.1);
+    glTexCoord2f(0.3,0.0); glVertex3f(0.1, 0.0, 0.9);
+    glTexCoord2f(0.3,1.0); glVertex3f(0.1, 0.8, 0.9);
+    glTexCoord2f(0.0,1.0); glVertex3f(0.1, 0.8, 0.1);
+    // front wall
+    glNormal3d(0, 0, -1);
+    glTexCoord2f(0.0, 0.0); glVertex3f(0.1, 0.0, 0.9);
+    glTexCoord2f(1.0, 0.0); glVertex3f(0.9, 0.0, 0.9);
+    glTexCoord2f(1.0, 1.0); glVertex3f(0.9, 0.8, 0.9);
+    glTexCoord2f(0.0, 1.0); glVertex3f(0.1, 0.8, 0.9);
+    // right wall
+    glNormal3d(-1, 0, 0);
+    glTexCoord2f(0.0, 0.0); glVertex3f(0.9, 0.0, 0.9);
+    glTexCoord2f(1.0, 0.0); glVertex3f(0.9, 0.0, 0.1);
+    glTexCoord2f(1.0, 1.0); glVertex3f(0.9, 0.8, 0.1);
+    glTexCoord2f(0.0, 1.0); glVertex3f(0.9, 0.8, 0.9);
+    // back wall
+    glNormal3d(0, 0, -1);
+    glTexCoord2f(0.0, 0.0); glVertex3f(0.0, 0.0, 0.0);
+    glTexCoord2f(1.0, 0.0); glVertex3f(0.0, 0.0, 0.0);
+    glTexCoord2f(1.0, 1.0); glVertex3f(0.0, 0.0, 0.0);
+    glTexCoord2f(0.0, 1.0); glVertex3f(0.0, 0.0, 0.0);
+    // end
   glEnd();
 
   glBindTexture(GL_TEXTURE_2D, textures[1]);
-  glBegin(GL_TRIANGLES);
-  // Right
-  glColor3ub(0x77, 0x77 , 0x77);
-
-  glNormal3f(0.37, 0.93, 0);
-  glTexCoord2f(0.0, 0.0); glVertex3d( 1.25, 1, 1.25);
-  glTexCoord2f(1.0, 0.0); glVertex3d( 1.25, 1,-1.25);
-  glTexCoord2f(0.5, 1.0); glVertex3d(0,1.5,0);
-  // Front
-  glNormal3f(0, 0.93, 0.37);
-  glTexCoord2f(0.0, 0.0); glVertex3d( 1.25, 1, 1.25);
-  glTexCoord2f(1.0, 0.0); glVertex3d(-1.25, 1, 1.25);
-  glTexCoord2f(0.5, 1.0); glVertex3d(0,1.5,0);
-  // Left
-  glNormal3f(-0.37, 0.93, 0);
-  glTexCoord2f(0.0, 0.0); glVertex3d(-1.25, 1, 1.25);
-  glTexCoord2f(1.0, 0.0); glVertex3d(-1.25, 1,-1.25);
-  glTexCoord2f(0.5, 1.0); glVertex3d(0,1.5,0);
-  // Back
-  glNormal3f(0, 0.93, -0.37);
-  glTexCoord2f(0.0, 0.0); glVertex3d( 1.25, 1,-1.25);
-  glTexCoord2f(1.0, 0.0); glVertex3d(-1.25, 1,-1.25);
-  glTexCoord2f(0.5, 1.0); glVertex3d(0,1.5,0);
+  glColor3ub(0x77, 0x77 , 0x77); //TODO: could this be a triangle strip?
+  glBegin(GL_TRIANGLES); //TODO: redo roof normal vectors with new points
+    // left roof
+    // glNormal3f(0.37, 0.93, 0);
+    glTexCoord2f(0.0, 0.0); glVertex3d(0.0, 0.8, 0.0);
+    glTexCoord2f(1.0, 0.0); glVertex3d(0.0, 0.8, 1.0);
+    glTexCoord2f(0.5, 1.0); glVertex3d(0.5, 1.0, 0.5);
+    // front roof
+    // glNormal3f(0, 0.93, 0.37);
+    glTexCoord2f(0.0, 0.0); glVertex3d(0.0, 0.8, 1.0);
+    glTexCoord2f(1.0, 0.0); glVertex3d(1.0, 0.8, 1.0);
+    glTexCoord2f(0.5, 1.0); glVertex3d(0.5, 1.0, 0.5);
+    // right roof
+    // glNormal3f(-0.37, 0.93, 0);
+    glTexCoord2f(0.0, 0.0); glVertex3d(1.0, 0.8, 1.0);
+    glTexCoord2f(1.0, 0.0); glVertex3d(1.0, 0.8, 0.0);
+    glTexCoord2f(0.5, 1.0); glVertex3d(0.5, 1.0, 0.5);
+    // back roof
+    // glNormal3f(0, 0.93, -0.37);
+    glTexCoord2f(0.0, 0.0); glVertex3d(1.0, 0.8, 0.0);
+    glTexCoord2f(1.0, 0.0); glVertex3d(0.0, 0.8, 0.0);
+    glTexCoord2f(0.5, 1.0); glVertex3d(0.5, 1.0, 0.5);
 
   glEnd();
   glDisable(GL_TEXTURE_2D);
