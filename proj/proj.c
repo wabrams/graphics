@@ -12,10 +12,12 @@
 
 #include "framework.h"
 #include "portal.h"
+#include "shapes.h"
 
 #define SHOW_AXES 1
 
 #define NUMBER_PORTALS 2
+#define NUMBER_CUBOIDS 2
 #define BUFF_WRITE_LEN 8192
 #define PROJECT_FONT GLUT_BITMAP_8_BY_13 //alt: GLUT_BITMAP_HELVETICA_12
 
@@ -23,6 +25,7 @@ window_t w;
 view_t v;
 player_t p;
 portal_t portals[NUMBER_PORTALS];
+cuboid_t cuboids[NUMBER_CUBOIDS];
 
 void write(float x, float y, float z, const char * format, ...)
 {
@@ -94,6 +97,11 @@ void display()
   glEnable(GL_CULL_FACE);
   glShadeModel(GL_SMOOTH);
 
+  //draw cubes
+  for (int i = 0; i < 1; i++)
+    drawCuboid(&cuboids[i]);
+
+  //draw portals
   glBegin(GL_QUADS);
   for (int i = 0; i < NUMBER_PORTALS; i++)
   {
@@ -223,6 +231,16 @@ int main(int argc,char* argv[])
   portals[1].vertices[1] = (vertex_t){3, 0, 0};
   portals[1].vertices[2] = (vertex_t){3, 1, 0};
   portals[1].vertices[3] = (vertex_t){2, 1, 0};
+
+  cuboids[0].x = cuboids[0].y = cuboids[0].z = 0.5;
+  cuboids[0].dimx = cuboids[0].dimy = cuboids[0].dimz = 0.1;
+  cuboids[0].th = 0;
+  cuboids[0].colors[0] = (color_t) {0xFF, 0x00, 0x00};
+  cuboids[0].colors[1] = (color_t) {0x00, 0xFF, 0xFF};
+  cuboids[0].colors[2] = (color_t) {0xFF, 0xFF, 0x00};
+  cuboids[0].colors[3] = (color_t) {0x00, 0xFF, 0x00};
+  cuboids[0].colors[4] = (color_t) {0x00, 0x00, 0xFF};
+  cuboids[0].colors[5] = (color_t) {0xFF, 0x00, 0xFF};
 
   glutInit(&argc,argv);
   glutInitWindowSize(500,500);
