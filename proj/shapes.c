@@ -73,50 +73,51 @@ void drawCuboid(cuboid_t * c)
   glPopMatrix();
 }
 
-void drawSkybox(double D)
+void drawSkybox(vertex_t * v, float D)
 {
-   glColor3f(1,1,1);
-   glEnable(GL_TEXTURE_2D);
+  glPushMatrix();
+  glTranslated(v -> x, v -> y, v -> z);
+  glEnable(GL_TEXTURE_2D);
+  glColor3f(1, 1, 1);
+  //  Sides
+  glBindTexture(GL_TEXTURE_2D,textures[3]);
+  glBegin(GL_QUADS);
+    glTexCoord2f(0.00,0); glVertex3f(-D,-D,-D);
+    glTexCoord2f(0.25,0); glVertex3f(+D,-D,-D);
+    glTexCoord2f(0.25,1); glVertex3f(+D,+D,-D);
+    glTexCoord2f(0.00,1); glVertex3f(-D,+D,-D);
 
-   //  Sides
-   glBindTexture(GL_TEXTURE_2D,textures[3]);
-   glBegin(GL_QUADS);
-   glTexCoord2f(0.00,0); glVertex3f(-D,-D,-D);
-   glTexCoord2f(0.25,0); glVertex3f(+D,-D,-D);
-   glTexCoord2f(0.25,1); glVertex3f(+D,+D,-D);
-   glTexCoord2f(0.00,1); glVertex3f(-D,+D,-D);
+    glTexCoord2f(0.25,0); glVertex3f(+D,-D,-D);
+    glTexCoord2f(0.50,0); glVertex3f(+D,-D,+D);
+    glTexCoord2f(0.50,1); glVertex3f(+D,+D,+D);
+    glTexCoord2f(0.25,1); glVertex3f(+D,+D,-D);
 
-   glTexCoord2f(0.25,0); glVertex3f(+D,-D,-D);
-   glTexCoord2f(0.50,0); glVertex3f(+D,-D,+D);
-   glTexCoord2f(0.50,1); glVertex3f(+D,+D,+D);
-   glTexCoord2f(0.25,1); glVertex3f(+D,+D,-D);
+    glTexCoord2f(0.50,0); glVertex3f(+D,-D,+D);
+    glTexCoord2f(0.75,0); glVertex3f(-D,-D,+D);
+    glTexCoord2f(0.75,1); glVertex3f(-D,+D,+D);
+    glTexCoord2f(0.50,1); glVertex3f(+D,+D,+D);
 
-   glTexCoord2f(0.50,0); glVertex3f(+D,-D,+D);
-   glTexCoord2f(0.75,0); glVertex3f(-D,-D,+D);
-   glTexCoord2f(0.75,1); glVertex3f(-D,+D,+D);
-   glTexCoord2f(0.50,1); glVertex3f(+D,+D,+D);
+    glTexCoord2f(0.75,0); glVertex3f(-D,-D,+D);
+    glTexCoord2f(1.00,0); glVertex3f(-D,-D,-D);
+    glTexCoord2f(1.00,1); glVertex3f(-D,+D,-D);
+    glTexCoord2f(0.75,1); glVertex3f(-D,+D,+D);
+  glEnd();
+  //  Top and bottom
+  glBindTexture(GL_TEXTURE_2D,textures[4]);
+  glBegin(GL_QUADS);
+  glTexCoord2f(0.0,0); glVertex3f(+D,+D,-D);
+  glTexCoord2f(0.5,0); glVertex3f(+D,+D,+D);
+  glTexCoord2f(0.5,1); glVertex3f(-D,+D,+D);
+  glTexCoord2f(0.0,1); glVertex3f(-D,+D,-D);
 
-   glTexCoord2f(0.75,0); glVertex3f(-D,-D,+D);
-   glTexCoord2f(1.00,0); glVertex3f(-D,-D,-D);
-   glTexCoord2f(1.00,1); glVertex3f(-D,+D,-D);
-   glTexCoord2f(0.75,1); glVertex3f(-D,+D,+D);
-   glEnd();
+  glTexCoord2f(1.0,1); glVertex3f(-D,-D,+D);
+  glTexCoord2f(0.5,1); glVertex3f(+D,-D,+D);
+  glTexCoord2f(0.5,0); glVertex3f(+D,-D,-D);
+  glTexCoord2f(1.0,0); glVertex3f(-D,-D,-D);
 
-   //  Top and bottom
-   glBindTexture(GL_TEXTURE_2D,textures[4]);
-   glBegin(GL_QUADS);
-   glTexCoord2f(0.0,0); glVertex3f(+D,+D,-D);
-   glTexCoord2f(0.5,0); glVertex3f(+D,+D,+D);
-   glTexCoord2f(0.5,1); glVertex3f(-D,+D,+D);
-   glTexCoord2f(0.0,1); glVertex3f(-D,+D,-D);
-
-   glTexCoord2f(1.0,1); glVertex3f(-D,-D,+D);
-   glTexCoord2f(0.5,1); glVertex3f(+D,-D,+D);
-   glTexCoord2f(0.5,0); glVertex3f(+D,-D,-D);
-   glTexCoord2f(1.0,0); glVertex3f(-D,-D,-D);
-   glEnd();
-
-   glDisable(GL_TEXTURE_2D);
+  glEnd();
+  glDisable(GL_TEXTURE_2D);
+  glPopMatrix();
 }
 
 static void drawHouse()

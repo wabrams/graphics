@@ -97,9 +97,10 @@ void display()
   glShadeModel(GL_SMOOTH);
 
   //draw cubes
+  vertex_t v = (vertex_t){car.x, car.y, car.z};
   drawCuboid(&car);
-  drawSkybox(3.0); //TODO: center
-  
+  drawSkybox(&v, 2.0); //TODO: center
+
   for (int i = -SHOW_RD; i < SHOW_RD; i++)
     for (int j = -SHOW_RD; j < SHOW_RD; j++)
     {
