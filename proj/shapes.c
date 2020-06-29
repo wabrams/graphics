@@ -13,8 +13,8 @@
 #include "shapes.h"
 #include "framework.h"
 
-#define NUM_TEXTURES 5
-const char * texture_filepaths[] = {"wall.bmp", "roof.bmp", "grass.bmp", "sky0.bmp", "sky1.bmp"};
+#define NUM_TEXTURES 6
+const char * texture_filepaths[] = {"img/wall.bmp", "img/roof.bmp", "img/grass.bmp", "img/sky0.bmp", "img/sky1.bmp", "img/road.bmp"};
 unsigned int textures[NUM_TEXTURES];
 
 void loadTextures()
@@ -77,69 +77,110 @@ void drawSkybox(vertex_t * v, float D)
 {
   glPushMatrix();
   glTranslated(v -> x, v -> y, v -> z);
-  glEnable(GL_TEXTURE_2D);
-  glColor3f(1, 1, 1);
+  // glEnable(GL_TEXTURE_2D);
+  glColor3ub(0x50, 0xD9, 0xFF);
   //  Sides
   glBindTexture(GL_TEXTURE_2D,textures[3]);
   glBegin(GL_QUADS);
-    glTexCoord2f(0.00,0); glVertex3f(-D,-D,-D);
-    glTexCoord2f(0.25,0); glVertex3f(+D,-D,-D);
-    glTexCoord2f(0.25,1); glVertex3f(+D,+D,-D);
-    glTexCoord2f(0.00,1); glVertex3f(-D,+D,-D);
+    /* glTexCoord2f(0.00,0); */ glVertex3f(-D,-D,-D);
+    /* glTexCoord2f(0.25,0); */ glVertex3f(+D,-D,-D);
+    /* glTexCoord2f(0.25,1); */ glVertex3f(+D,+D,-D);
+    /* glTexCoord2f(0.00,1); */ glVertex3f(-D,+D,-D);
 
-    glTexCoord2f(0.25,0); glVertex3f(+D,-D,-D);
-    glTexCoord2f(0.50,0); glVertex3f(+D,-D,+D);
-    glTexCoord2f(0.50,1); glVertex3f(+D,+D,+D);
-    glTexCoord2f(0.25,1); glVertex3f(+D,+D,-D);
+    /* glTexCoord2f(0.25,0); */ glVertex3f(+D,-D,-D);
+    /* glTexCoord2f(0.50,0); */ glVertex3f(+D,-D,+D);
+    /* glTexCoord2f(0.50,1); */ glVertex3f(+D,+D,+D);
+    /* glTexCoord2f(0.25,1); */ glVertex3f(+D,+D,-D);
 
-    glTexCoord2f(0.50,0); glVertex3f(+D,-D,+D);
-    glTexCoord2f(0.75,0); glVertex3f(-D,-D,+D);
-    glTexCoord2f(0.75,1); glVertex3f(-D,+D,+D);
-    glTexCoord2f(0.50,1); glVertex3f(+D,+D,+D);
+    /* glTexCoord2f(0.50,0); */ glVertex3f(+D,-D,+D);
+    /* glTexCoord2f(0.75,0); */ glVertex3f(-D,-D,+D);
+    /* glTexCoord2f(0.75,1); */ glVertex3f(-D,+D,+D);
+    /* glTexCoord2f(0.50,1); */ glVertex3f(+D,+D,+D);
 
-    glTexCoord2f(0.75,0); glVertex3f(-D,-D,+D);
-    glTexCoord2f(1.00,0); glVertex3f(-D,-D,-D);
-    glTexCoord2f(1.00,1); glVertex3f(-D,+D,-D);
-    glTexCoord2f(0.75,1); glVertex3f(-D,+D,+D);
-  glEnd();
+    /* glTexCoord2f(0.75,0); */ glVertex3f(-D,-D,+D);
+    /* glTexCoord2f(1.00,0); */ glVertex3f(-D,-D,-D);
+    /* glTexCoord2f(1.00,1); */ glVertex3f(-D,+D,-D);
+    /* glTexCoord2f(0.75,1); */ glVertex3f(-D,+D,+D);
+  // glEnd();
   //  Top and bottom
-  glBindTexture(GL_TEXTURE_2D,textures[4]);
-  glBegin(GL_QUADS);
-  glTexCoord2f(0.0,0); glVertex3f(+D,+D,-D);
-  glTexCoord2f(0.5,0); glVertex3f(+D,+D,+D);
-  glTexCoord2f(0.5,1); glVertex3f(-D,+D,+D);
-  glTexCoord2f(0.0,1); glVertex3f(-D,+D,-D);
+  // glBindTexture(GL_TEXTURE_2D,textures[4]);
+  // glBegin(GL_QUADS);
+  /* glTexCoord2f(0.0,0); */ glVertex3f(+D,+D,-D);
+  /* glTexCoord2f(0.5,0); */ glVertex3f(+D,+D,+D);
+  /* glTexCoord2f(0.5,1); */ glVertex3f(-D,+D,+D);
+  /* glTexCoord2f(0.0,1); */ glVertex3f(-D,+D,-D);
 
-  glTexCoord2f(1.0,1); glVertex3f(-D,-D,+D);
-  glTexCoord2f(0.5,1); glVertex3f(+D,-D,+D);
-  glTexCoord2f(0.5,0); glVertex3f(+D,-D,-D);
-  glTexCoord2f(1.0,0); glVertex3f(-D,-D,-D);
+  /* glTexCoord2f(1.0,1); */ glVertex3f(-D,-D,+D);
+  /* glTexCoord2f(0.5,1); */ glVertex3f(+D,-D,+D);
+  /* glTexCoord2f(0.5,0); */ glVertex3f(+D,-D,-D);
+  /* glTexCoord2f(1.0,0); */ glVertex3f(-D,-D,-D);
 
   glEnd();
   glDisable(GL_TEXTURE_2D);
   glPopMatrix();
 }
 
+static void polarVertex(float th, float ph)
+{
+   glVertex3d(Sin(th)*Cos(ph) , Sin(ph) , Cos(th)*Cos(ph));
+}
+
+void drawSun(vertex_t * v, float r, float emission, float shiny, int inc)
+{
+   int th,ph;
+   float yellow[] = {1.0,1.0,0.0,1.0};
+   float Emission[]  = {0.0,0.0,0.01*emission,1.0};
+   //  Save transformation
+   glPushMatrix();
+   //  Offset, scale and rotate
+   glTranslated(v -> x, v -> y,v -> z);
+   glScaled(r,r,r);
+   //  yellow sphere
+   glColor3f(1,1,0);
+   glMaterialf(GL_FRONT,GL_SHININESS,shiny);
+   glMaterialfv(GL_FRONT,GL_SPECULAR,yellow);
+   glMaterialfv(GL_FRONT,GL_EMISSION,Emission);
+   //  Bands of latitude
+   for (ph=-90;ph<90;ph+=inc)
+   {
+      glBegin(GL_QUAD_STRIP);
+      for (th=0;th<=360;th+=2*inc)
+      {
+         polarVertex(th,ph);
+         polarVertex(th,ph+inc);
+      }
+      glEnd();
+   }
+   //  Undo transofrmations
+   glPopMatrix();
+}
+
 static void drawHouse()
 {
+  float shiny = 1;
+  float white[] = {1,1,1,1};
+  float black[] = {0,0,0,1};
+  glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,black);
   glEnable(GL_TEXTURE_2D);
   glTexEnvi(GL_TEXTURE_ENV , GL_TEXTURE_ENV_MODE , GL_MODULATE);
   glBindTexture(GL_TEXTURE_2D, textures[0]);
   glBegin(GL_QUADS);
     // left wall
-    glNormal3d(1, 0, 0);
+    glNormal3d(-1, 0, 0);
     glTexCoord2f(0.0,0.0); glVertex3f(0.1, 0.0, 0.1);
     glTexCoord2f(1.0,0.0); glVertex3f(0.1, 0.0, 0.9);
     glTexCoord2f(1.0,1.0); glVertex3f(0.1, 0.8, 0.9);
     glTexCoord2f(0.0,1.0); glVertex3f(0.1, 0.8, 0.1);
     // front wall
-    glNormal3d(0, 0, -1);
+    glNormal3d(0, 0, +1);
     glTexCoord2f(0.0, 0.0); glVertex3f(0.1, 0.0, 0.9);
     glTexCoord2f(1.0, 0.0); glVertex3f(0.9, 0.0, 0.9);
     glTexCoord2f(1.0, 1.0); glVertex3f(0.9, 0.8, 0.9);
     glTexCoord2f(0.0, 1.0); glVertex3f(0.1, 0.8, 0.9);
     // right wall
-    glNormal3d(-1, 0, 0);
+    glNormal3d(+1, 0, 0);
     glTexCoord2f(0.0, 0.0); glVertex3f(0.9, 0.0, 0.9);
     glTexCoord2f(1.0, 0.0); glVertex3f(0.9, 0.0, 0.1);
     glTexCoord2f(1.0, 1.0); glVertex3f(0.9, 0.8, 0.1);
@@ -162,7 +203,7 @@ static void drawHouse()
     glTexCoord2f(1.0, 0.0); glVertex3d(0.0, 0.8, 1.0);
     glTexCoord2f(0.5, 1.0); glVertex3d(0.5, 1.0, 0.5);
     // front roof
-    glNormal3f( 0.0, -0.5, -0.2);
+    glNormal3f( 0.0, 0.5, +0.2);
     glTexCoord2f(0.0, 0.0); glVertex3d(0.0, 0.8, 1.0);
     glTexCoord2f(1.0, 0.0); glVertex3d(1.0, 0.8, 1.0);
     glTexCoord2f(0.5, 1.0); glVertex3d(0.5, 1.0, 0.5);
@@ -172,7 +213,7 @@ static void drawHouse()
     glTexCoord2f(1.0, 0.0); glVertex3d(1.0, 0.8, 0.0);
     glTexCoord2f(0.5, 1.0); glVertex3d(0.5, 1.0, 0.5);
     // back roof
-    glNormal3f( 0.0, -0.5,  0.2);
+    glNormal3f( 0.0,  0.5, -0.2);
     glTexCoord2f(0.0, 0.0); glVertex3d(1.0, 0.8, 0.0);
     glTexCoord2f(1.0, 0.0); glVertex3d(0.0, 0.8, 0.0);
     glTexCoord2f(0.5, 1.0); glVertex3d(0.5, 1.0, 0.5);
@@ -190,55 +231,65 @@ void drawGrid(grid_t * g)
   glTranslated(g -> x, g -> y, g -> z);
 
   // draw the floor
-  glBegin(GL_QUADS);
-  // white (intersections)
-  glColor3ub(0xFF, 0xFF, 0xFF);
-    //top-left
-    glVertex3f(0.0, 0.0, 0.0);
-    glVertex3f(0.0, 0.0, 0.1);
-    glVertex3f(0.1, 0.0, 0.1);
-    glVertex3f(0.1, 0.0, 0.0);
-    //bottom-left
-    glVertex3f(0.0, 0.0, 0.9);
-    glVertex3f(0.0, 0.0, 1.0);
-    glVertex3f(0.1, 0.0, 1.0);
-    glVertex3f(0.1, 0.0, 0.9);
-    //bottom-right
-    glVertex3f(0.9, 0.0, 0.9);
-    glVertex3f(0.9, 0.0, 1.0);
-    glVertex3f(1.0, 0.0, 1.0);
-    glVertex3f(1.0, 0.0, 0.9);
-    //top-right
-    glVertex3f(0.9, 0.0, 0.0);
-    glVertex3f(0.9, 0.0, 0.1);
-    glVertex3f(1.0, 0.0, 0.1);
-    glVertex3f(1.0, 0.0, 0.0);
-  // gray (roads)
-  glColor3ub(0xAA, 0xAA, 0xAA);
-    //up
-    glVertex3f(0.1, 0.0, 0.0);
-    glVertex3f(0.1, 0.0, 0.1);
-    glVertex3f(0.9, 0.0, 0.1);
-    glVertex3f(0.9, 0.0, 0.0);
-    //left
-    glVertex3f(0.0, 0.0, 0.1);
-    glVertex3f(0.0, 0.0, 0.9);
-    glVertex3f(0.1, 0.0, 0.9);
-    glVertex3f(0.1, 0.0, 0.1);
-    //down
-    glVertex3f(0.1, 0.0, 0.9);
-    glVertex3f(0.1, 0.0, 1.0);
-    glVertex3f(0.9, 0.0, 1.0);
-    glVertex3f(0.9, 0.0, 0.9);
-    //right
-    glVertex3f(0.9, 0.0, 0.1);
-    glVertex3f(0.9, 0.0, 0.9);
-    glVertex3f(1.0, 0.0, 0.9);
-    glVertex3f(1.0, 0.0, 0.1);
-  glEnd();
-  // green (grass)
+  float shiny = 1;
+  float white[] = {1,1,1,1};
+  float black[] = {0,0,0,1};
+  glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,black);
   glEnable(GL_TEXTURE_2D);
   glTexEnvi(GL_TEXTURE_ENV , GL_TEXTURE_ENV_MODE , GL_MODULATE);
+  glBindTexture(GL_TEXTURE_2D, textures[5]);
+  glBegin(GL_QUADS);
+  // white (intersections)
+  glNormal3d( 0,  1,  0);
+  glColor3ub(0xAA, 0xAA, 0xAA);
+    //top-left
+    glTexCoord2f(0.0, 0.5); glVertex3f(0.0, 0.0, 0.0);
+    glTexCoord2f(0.0, 0.0); glVertex3f(0.0, 0.0, 0.1);
+    glTexCoord2f(0.5, 0.0); glVertex3f(0.1, 0.0, 0.1);
+    glTexCoord2f(0.5, 0.5); glVertex3f(0.1, 0.0, 0.0);
+    //bottom-left
+    glTexCoord2f(0.5, 0.0); glVertex3f(0.0, 0.0, 0.9);
+    glTexCoord2f(0.5, 0.5); glVertex3f(0.0, 0.0, 1.0);
+    glTexCoord2f(0.0, 0.5); glVertex3f(0.1, 0.0, 1.0);
+    glTexCoord2f(0.0, 0.0); glVertex3f(0.1, 0.0, 0.9);
+    //bottom-right
+    glTexCoord2f(0.5, 0.0); glVertex3f(0.9, 0.0, 0.9);
+    glTexCoord2f(0.0, 0.0); glVertex3f(0.9, 0.0, 1.0);
+    glTexCoord2f(0.0, 0.5); glVertex3f(1.0, 0.0, 1.0);
+    glTexCoord2f(0.5, 0.5); glVertex3f(1.0, 0.0, 0.9);
+    //top-right
+    glTexCoord2f(0.0, 0.0); glVertex3f(0.9, 0.0, 0.0);
+    glTexCoord2f(0.5, 0.0); glVertex3f(0.9, 0.0, 0.1);
+    glTexCoord2f(0.5, 0.5); glVertex3f(1.0, 0.0, 0.1);
+    glTexCoord2f(0.0, 0.5); glVertex3f(1.0, 0.0, 0.0);
+  glEnd();
+  // gray (roads)
+  glColor3ub(0xAA, 0xAA, 0xAA);
+  glBegin(GL_QUADS);
+    //up
+    glTexCoord2f(0.5, 1.0); glVertex3f(0.1, 0.0, 0.0);
+    glTexCoord2f(0.5, 0.0); glVertex3f(0.1, 0.0, 0.1);
+    glTexCoord2f(1.0, 0.0); glVertex3f(0.9, 0.0, 0.1);
+    glTexCoord2f(1.0, 1.0); glVertex3f(0.9, 0.0, 0.0);
+    //left
+    glTexCoord2f(1.0, 1.0); glVertex3f(0.0, 0.0, 0.1);
+    glTexCoord2f(0.5, 1.0); glVertex3f(0.0, 0.0, 0.9);
+    glTexCoord2f(0.5, 0.0); glVertex3f(0.1, 0.0, 0.9);
+    glTexCoord2f(1.0, 0.0); glVertex3f(0.1, 0.0, 0.1);
+    //down
+    glTexCoord2f(1.0, 0.0); glVertex3f(0.1, 0.0, 0.9);
+    glTexCoord2f(1.0, 1.0); glVertex3f(0.1, 0.0, 1.0);
+    glTexCoord2f(0.5, 1.0); glVertex3f(0.9, 0.0, 1.0);
+    glTexCoord2f(0.5, 0.0); glVertex3f(0.9, 0.0, 0.9);
+    //right
+    glTexCoord2f(0.5, 0.0); glVertex3f(0.9, 0.0, 0.1);
+    glTexCoord2f(1.0, 0.0); glVertex3f(0.9, 0.0, 0.9);
+    glTexCoord2f(1.0, 1.0); glVertex3f(1.0, 0.0, 0.9);
+    glTexCoord2f(0.5, 1.0); glVertex3f(1.0, 0.0, 0.1);
+  glEnd();
+  // green (grass)
   glBindTexture(GL_TEXTURE_2D, textures[2]);
   glBegin(GL_QUADS);
   glColor3ub(0x00, 0x99, 0x00);

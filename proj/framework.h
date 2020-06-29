@@ -45,6 +45,16 @@ typedef struct grid_st
   int x, y, z;
 } grid_t;
 
+typedef struct light_s
+{
+  int  emission;      // Emission intensity (%)
+  int  ambient;       // Ambient intensity  (%)
+  int  diffuse;       // Diffuse intensity  (%)
+  int  specular;      // Specular intensity (%)
+  int  shininess;     // Shininess (power of two)
+  float shiny;        // Shininess (value)
+} light_t;
+
 //handled in framework.c
 void check(const char * where);
 void fatal(const char * format, ...);

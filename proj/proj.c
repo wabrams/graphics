@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <stdbool.h>
 #include <math.h>
 
 #define GL_GLEXT_PROTOTYPES
@@ -25,6 +26,10 @@ view_t v;
 player_t p;
 cuboid_t car;
 grid_t g;
+light_t l;
+float sun_dist   =  2;
+float sun_angle  = 90;
+float sun_height =  0.5;
 
 void write(float x, float y, float z, const char * format, ...)
 {
@@ -96,11 +101,34 @@ void display()
   glEnable(GL_CULL_FACE);
   glShadeModel(GL_SMOOTH);
 
-  //draw cubes
+  //translate intensity to color vectors
+  float Ambient[]   = {0.01*l.ambient ,0.01*l.ambient ,0.01*l.ambient ,1.0};
+  float Diffuse[]   = {0.01*l.diffuse ,0.01*l.diffuse ,0.01*l.diffuse ,1.0};
+  float Specular[]  = {0.01*l.specular,0.01*l.specular,0.01*l.specular,1.0};
+  //  Light position
+  float Position[]  = {sun_dist*Cos(sun_angle),sun_height,sun_dist*Sin(sun_angle), 1};
+  vertex_t sun_pos = (vertex_t) {Position[0], Position[1], Position[2]};
+  //  Draw light position as ball (still no lighting here)
+  glColor3f(1,1,1);
+  drawSun(&sun_pos, 0.2, l.emission, l.shiny, 4);
+  //  OpenGL should normalize normal vectors
+  glEnable(GL_NORMALIZE);
+  //  Enable lighting
+  glEnable(GL_LIGHTING);
+  glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, true);
+  glColorMaterial(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE);
+  glEnable(GL_COLOR_MATERIAL);
+  glEnable(GL_LIGHT0);
+  glLightfv(GL_LIGHT0,GL_AMBIENT ,Ambient);
+  glLightfv(GL_LIGHT0,GL_DIFFUSE ,Diffuse);
+  glLightfv(GL_LIGHT0,GL_SPECULAR,Specular);
+  glLightfv(GL_LIGHT0,GL_POSITION,Position);
+
+
+  //draw cube
   vertex_t v = (vertex_t){car.x, car.y, car.z};
   drawCuboid(&car);
-  drawSkybox(&v, 2.0); //TODO: center
-
+  //draw grids
   for (int i = -SHOW_RD; i < SHOW_RD; i++)
     for (int j = -SHOW_RD; j < SHOW_RD; j++)
     {
@@ -108,8 +136,8 @@ void display()
       drawGrid(&t);
     }
 
-
-
+  glDisable(GL_LIGHTING);
+  drawSkybox(&v, 4.0);
   #if SHOW_AXES
     glColor3f(1, 1, 1);
     glBegin(GL_LINES);
@@ -207,6 +235,7 @@ void idle()
   car.th = fmod(90*t,360.0);
   vertex_t cloc = (vertex_t){car.x, car.y, car.z};
   getCurrentGrid(&cloc, &g);
+  sun_angle = fmod(90*t,360.0);
   glutPostRedisplay();
 }
 
@@ -221,7 +250,7 @@ int main(int argc,char* argv[])
   p.speed = 0.05;
 
   v.th = v.ph = 0; //unused for now, not until 3P POV
-  v.dim = 1;
+  v.dim = 2;
   v.fov = 50;
 
   car.x = car.y = car.z = 0;
@@ -234,10 +263,17 @@ int main(int argc,char* argv[])
   car.colors[4] = (color_t) {0x00, 0x00, 0xFF};
   car.colors[5] = (color_t) {0xFF, 0x00, 0xFF};
 
+  l.emission = 0;
+  l.ambient = 10;
+  l.diffuse = 50;
+  l.specular = 0;
+  l.shininess = 0;
+  l.shiny = 1;
+
   glutInit(&argc,argv);
   glutInitWindowSize(500,500);
   glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
-  glutCreateWindow("A Suburban Drive");
+  glutCreateWindow("William Abrams - A Suburban Drive");
   glutIdleFunc(idle);
   glutDisplayFunc(display);
   glutReshapeFunc(reshape);
