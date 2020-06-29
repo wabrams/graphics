@@ -98,13 +98,16 @@ void display()
 
   //draw cubes
   drawCuboid(&car);
-  //TODO: eventually draw grid surrounding the area
+  drawSkybox(3.0); //TODO: center
+  
   for (int i = -SHOW_RD; i < SHOW_RD; i++)
     for (int j = -SHOW_RD; j < SHOW_RD; j++)
     {
       grid_t t = (grid_t){g.x + i, g.y, g.z + j};
       drawGrid(&t);
     }
+
+
 
   #if SHOW_AXES
     glColor3f(1, 1, 1);
@@ -221,7 +224,7 @@ int main(int argc,char* argv[])
   v.fov = 50;
 
   car.x = car.y = car.z = 0;
-  car.dimx = car.dimy = car.dimz = 0.1;
+  car.dimx = car.dimy = car.dimz = 0.05;
   car.th = 0;
   car.colors[0] = (color_t) {0xFF, 0x00, 0x00};
   car.colors[1] = (color_t) {0x00, 0xFF, 0xFF};
@@ -233,7 +236,7 @@ int main(int argc,char* argv[])
   glutInit(&argc,argv);
   glutInitWindowSize(500,500);
   glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
-  glutCreateWindow("HW #3 - William Abrams");
+  glutCreateWindow("A Suburban Drive");
   glutIdleFunc(idle);
   glutDisplayFunc(display);
   glutReshapeFunc(reshape);

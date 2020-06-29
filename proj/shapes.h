@@ -44,6 +44,7 @@ typedef struct floor_st
 } floor_t;
 
 void loadTextures();
+void drawSkybox(double d);
 void drawCuboid(cuboid_t * c);
 void drawGrid(grid_t * g);
 
