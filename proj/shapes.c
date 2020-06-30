@@ -33,36 +33,42 @@ void drawCuboid(cuboid_t * c)
   // draw
   glBegin(GL_QUADS);
   // front
+  glNormal3d(0, 0, 1);
   glColor3ub(c->colors[CF_FRONT].r, c->colors[CF_FRONT].g, c->colors[CF_FRONT].b);
   glVertex3f(-1,-1, 1);
   glVertex3f(+1,-1, 1);
   glVertex3f(+1,+1, 1);
   glVertex3f(-1,+1, 1);
   // back
+  glNormal3d(0, 0, -1);
   glColor3ub(c->colors[CF_BACK].r, c->colors[CF_BACK].g, c->colors[CF_BACK].b);
   glVertex3f(+1,-1,-1);
   glVertex3f(-1,-1,-1);
   glVertex3f(-1,+1,-1);
   glVertex3f(+1,+1,-1);
   // left
+  glNormal3d(-1, 0, 0);
   glColor3ub(c->colors[CF_LEFT].r, c->colors[CF_LEFT].g, c->colors[CF_LEFT].b);
   glVertex3f(-1,-1,-1);
   glVertex3f(-1,-1,+1);
   glVertex3f(-1,+1,+1);
   glVertex3f(-1,+1,-1);
   // right
+  glNormal3d(1, 0, 0);
   glColor3ub(c->colors[CF_RIGHT].r, c->colors[CF_RIGHT].g, c->colors[CF_RIGHT].b);
   glVertex3f(+1,-1,+1);
   glVertex3f(+1,-1,-1);
   glVertex3f(+1,+1,-1);
   glVertex3f(+1,+1,+1);
   // top
+  glNormal3d(0, 1, 0);
   glColor3ub(c->colors[CF_TOP].r, c->colors[CF_TOP].g, c->colors[CF_TOP].b);
   glVertex3f(-1,+1,+1);
   glVertex3f(+1,+1,+1);
   glVertex3f(+1,+1,-1);
   glVertex3f(-1,+1,-1);
   // bottom
+  glNormal3d(0, -1, 0);
   glColor3ub(c->colors[CF_BOTTOM].r, c->colors[CF_BOTTOM].g, c->colors[CF_BOTTOM].b);
   glVertex3f(-1,-1,-1);
   glVertex3f(+1,-1,-1);
@@ -120,6 +126,25 @@ void drawSkybox(vertex_t * v, float D)
   glPopMatrix();
 }
 
+void drawCar(car_t * c)
+{
+  //temp:
+  cuboid_t cube;
+  cube.x = c -> x;
+  cube.y = c -> y;
+  cube.z = c -> z;
+  cube.dimx = c -> dimx;
+  cube.dimy = c -> dimy;
+  cube.dimz = c -> dimz;
+  cube.th = c -> th;
+  for (int i = 0; i < 6; i++)
+  {
+    color_t color = (color_t){0xFF, 0xFF, 0xFF};
+    cube.colors[i] = color;
+  }
+  drawCuboid(&cube);
+}
+
 static void polarVertex(float th, float ph)
 {
    glVertex3d(Sin(th)*Cos(ph) , Sin(ph) , Cos(th)*Cos(ph));
@@ -153,6 +178,13 @@ void drawSun(vertex_t * v, float r, float emission, float shiny, int inc)
    }
    //  Undo transofrmations
    glPopMatrix();
+}
+
+static void varyDimensions(vertex_t * v)
+{
+  v -> x = 0.2 + (((rand() % 10) - 10) / 100.0);
+  v -> y = 0.2 + (((rand() % 10) - 10) / 100.0);
+  v -> z = 0.2 + (((rand() % 10) - 10) / 100.0);
 }
 
 static void drawHouse()
@@ -302,45 +334,50 @@ void drawGrid(grid_t * g)
 
   //generate the house per this grid
   color_t hcolor;
+  vertex_t rsize;
   // NW house
-  glTranslated(0.2, 0.0, 0.2);
+  varyDimensions(&rsize);
+  glTranslated(0.1 + rsize.x, 0.0, 0.1 + rsize.z);
     hcolor.r = rand();
     hcolor.g = rand();
     hcolor.b = rand();
-    glScalef(0.2, 0.2, 0.2);
+    glScalef(rsize.x, rsize.y, rsize.z);
     glColor3ub(hcolor.r, hcolor.g, hcolor.b);
     drawHouse();
-    glScalef(5.0, 5.0, 5.0);
-    glTranslated(-0.2, 0.0, -0.2);
+    glScalef(1.0/rsize.x, 1.0/rsize.y, 1.0/rsize.z);
+    glTranslated(-0.1 - rsize.x, 0.0, -0.1 - rsize.z);
   // SW house
-  glTranslated(0.2, 0.0, 0.6);
+  varyDimensions(&rsize);
+  glTranslated(0.1 + rsize.x, 0.0, 0.5 + rsize.z);
     hcolor.r = rand();
     hcolor.g = rand();
     hcolor.b = rand();
-    glScalef(0.2, 0.2, 0.2);
+    glScalef(rsize.x, rsize.y, rsize.z);
     glColor3ub(hcolor.r, hcolor.g, hcolor.b);
     drawHouse();
-    glScalef(5.0, 5.0, 5.0);
-    glTranslated(-0.2, 0.0, -0.6);
+    glScalef(1.0/rsize.x, 1.0/rsize.y, 1.0/rsize.z);
+    glTranslated(-0.1 - rsize.x, 0.0, -0.5 - rsize.z);
   // SE house
-  glTranslated(0.6, 0.0, 0.6);
+  varyDimensions(&rsize);
+  glTranslated(0.5 + rsize.x, 0.0, 0.5 + rsize.z);
     hcolor.r = rand();
     hcolor.g = rand();
     hcolor.b = rand();
-    glScalef(0.2, 0.2, 0.2);
+    glScalef(rsize.x, rsize.y, rsize.z);
     glColor3ub(hcolor.r, hcolor.g, hcolor.b);
     drawHouse();
-    glScalef(5.0, 5.0, 5.0);
-    glTranslated(-0.6, 0.0, -0.6);
+    glScalef(1.0/rsize.x, 1.0/rsize.y, 1.0/rsize.z);
+    glTranslated(-0.5 - rsize.x, 0.0, -0.5 - rsize.z);
   // NE house
-  glTranslated(0.6, 0.0, 0.2);
+  varyDimensions(&rsize);
+  glTranslated(0.5 + rsize.x, 0.0, 0.1 + rsize.z);
     hcolor.r = rand();
     hcolor.g = rand();
     hcolor.b = rand();
-    glScalef(0.2, 0.2, 0.2);
+    glScalef(rsize.x, rsize.y, rsize.z);
     glColor3ub(hcolor.r, hcolor.g, hcolor.b);
     drawHouse();
-    glScalef(5.0, 5.0, 5.0);
-    glTranslated(-0.6, 0.0, -0.2);
+    glScalef(1.0/rsize.x, 1.0/rsize.y, 1.0/rsize.z);
+    glTranslated(-0.5 - rsize.x, 0.0, -0.1 - rsize.z);
   glPopMatrix();
 }

@@ -19,11 +19,9 @@ See new project proposal (enclosed as reproposal.pdf).
 
 # To Do List (no particular order)
 
-Monday: {Morning: [Lighting, Overhead (Sun)], Midday: [Fix Camera Turns, Add House Variety (size,
-location)], Evening: [Replace Cube with Car]}
+Monday: {Midday: [Fix Camera Turns], Evening: [Replace Cube with Car]}
 
-Tuesday: {Morning: [Lighting, Overhead (Moon)], Midday: [Car Velocity Controls (pressing W
-increases speed, D decreases speed)], Evening: [Turn In]}
+Tuesday: {Morning: [Lighting, Overhead (Moon)], Midday: [Car Velocity Limits, D decreases speed)], Evening: [Turn In]}
 Stretch:
 
 Wednesday: {Morning: [Particles from Car Exhaust], Midday: [Polishing Scene], Evening: [More

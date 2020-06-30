@@ -25,7 +25,7 @@ typedef struct cuboid_st
   float x, y, z;
   float dimx, dimy, dimz;
   float th;
-  color_t colors[6]; //TODO: make this pointer, reduces memory stored for repeated color references
+  color_t colors[6]; //TODO: make this pointer, reduces memory...
 } cuboid_t;
 
 typedef struct house_st
@@ -46,6 +46,7 @@ typedef struct floor_st
 void loadTextures();
 void drawSkybox(vertex_t * v, float d);
 void drawCuboid(cuboid_t * c);
+void drawCar(car_t * c);
 void drawSun(vertex_t * v, float r, float emission, float shiny, int inc);
 void drawGrid(grid_t * g);
 

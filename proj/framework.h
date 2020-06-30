@@ -28,13 +28,6 @@ typedef struct color_st
   unsigned int b: 8;
 } color_t;
 
-typedef struct player_st
-{
-  float x, y, z;
-  float pitch, yaw;
-  float speed;
-} player_t;
-
 typedef struct vertex_st
 {
   float x, y, z;
@@ -44,6 +37,14 @@ typedef struct grid_st
 {
   int x, y, z;
 } grid_t;
+
+typedef struct car_st
+{
+  float x, y, z;
+  float dimx, dimy, dimz;
+  float th;
+  float vel, acc;
+} car_t;
 
 typedef struct light_s
 {
