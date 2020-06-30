@@ -219,16 +219,16 @@ static void drawHouse()
     glTexCoord2f(0.0, 1.0); glVertex3f(0.9, 0.8, 0.9);
     // back wall
     glNormal3d(0, 0, -1);
-    glTexCoord2f(0.0, 0.0); glVertex3f(0.0, 0.0, 0.0);
-    glTexCoord2f(1.0, 0.0); glVertex3f(0.0, 0.0, 0.0);
-    glTexCoord2f(1.0, 1.0); glVertex3f(0.0, 0.0, 0.0);
-    glTexCoord2f(0.0, 1.0); glVertex3f(0.0, 0.0, 0.0);
+    glTexCoord2f(0.0, 0.0); glVertex3f(0.9, 0.0, 0.1);
+    glTexCoord2f(1.0, 0.0); glVertex3f(0.1, 0.0, 0.1);
+    glTexCoord2f(1.0, 1.0); glVertex3f(0.1, 0.8, 0.1);
+    glTexCoord2f(0.0, 1.0); glVertex3f(0.9, 0.8, 0.1);
     // end
   glEnd();
 
   glBindTexture(GL_TEXTURE_2D, textures[1]);
   glColor3ub(0x77, 0x77 , 0x77); //TODO: could this be a triangle strip?
-  glBegin(GL_TRIANGLES); //TODO: redo roof normal vectors with new points
+  glBegin(GL_TRIANGLES);
     // left roof
     glNormal3f(-0.2,  0.5,  0.0);
     glTexCoord2f(0.0, 0.0); glVertex3d(0.0, 0.8, 0.0);

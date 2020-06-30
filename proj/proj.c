@@ -26,9 +26,9 @@ view_t v;
 car_t c;
 grid_t g;
 light_t l;
-float sun_dist   =  0;
+float sun_dist   =  1;
 float sun_angle  =  0;
-float sun_height =  0.5;
+float sun_height =  1.5;
 
 void write(float x, float y, float z, const char * format, ...)
 {
