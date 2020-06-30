@@ -93,11 +93,11 @@ void display()
   glEnable(GL_DEPTH_TEST);
   glLoadIdentity();
 
-  glRotatef(30, 1, 0, 0);
-  glRotatef(c.th,   0, 1, 0);
-  glTranslatef(-c.x, -c.y - 1, -c.z - 1);
+  glRotatef(-c.ph, 1, 0, 0);
+  glRotatef(-c.th,   0, 1, 0);
+  glTranslatef(-c.x - (c.dist * Sin(c.th)), -c.y - c.height, -c.z - (c.dist * Cos(c.th)));
 
-  glEnable(GL_CULL_FACE);
+  // glEnable(GL_CULL_FACE);
   glShadeModel(GL_SMOOTH);
 
   // color and position vectors
@@ -165,7 +165,8 @@ void display()
     write(0, 0, 1, "Z");
   #endif
 
-  info(5, 5, "GRID: (%3d, %3d, %3d), VEL: %f", g.x, g.y, g.z, c.vel);
+  info(5, 5, "GRID: (%3d, %3d, %3d), CPOS: (%.2f, %.2f), %.2f, VEL: %.2f", g.x, g.y, g.z, c.x, c.y, c.z, c.vel);
+  info(5, 20, "DIST: %f, HEIGHT: %f, PH: %f", c.dist, c.height, c.ph);
 
   check("func-display");
   glFlush();
@@ -183,21 +184,52 @@ void keyboard(unsigned char k, int x, int y)
     case 'q':
       exit(0);
       break;
+    case 32:
+      c.vel = 0;
+      break;
+    case '0':
+      c.vel = 0;
+      c.x = c.z = 0;
+      break;
     case 'W':
     case 'w':
-      c.vel += c.acc;
+      if (c.vel <  0.99)
+        c.vel += c.acc;
       break;
     case 'A':
     case 'a':
       c.th = fmod(c.th + 5.0, 360.0);
+      c.vel += (c.vel == 0)? 0: (c.vel > 0.01)? -0.01 : 0.01;
       break;
     case 's':
     case 'S':
-      c.vel -= c.acc;
+      if (c.vel > -0.99)
+        c.vel -= c.acc;
       break;
     case 'D':
     case 'd':
       c.th = fmod(c.th - 5.0, 360.0);
+      c.vel += (c.vel == 0)? 0: (c.vel > 0.01)? -0.01 : 0.01;
+      break;
+    case '+':
+    case '=':
+      if (c.dist > 0)
+        c.dist -= 0.1;
+      break;
+    case '-':
+    case '_':
+      if (c.dist < 2)
+        c.dist += 0.1;
+      break;
+    case '{':
+    case '[':
+      if (c.height > 0.1)
+        c.height -= 0.1;
+      break;
+    case ']':
+    case '}':
+      if (c.height < 1.0)
+        c.height += 0.1;
       break;
   }
 
@@ -212,10 +244,12 @@ void special(int k, int x, int y)
   switch (k)
   {
     case GLUT_KEY_UP:
+      c.ph += 5;
       break;
     case GLUT_KEY_LEFT:
       break;
     case GLUT_KEY_DOWN:
+      c.ph -= 5;
       break;
     case GLUT_KEY_RIGHT:
       break;
@@ -227,7 +261,8 @@ void special(int k, int x, int y)
 void idle()
 {
   double t = glutGet(GLUT_ELAPSED_TIME)/1000.0;
-  c.z -= c.vel * t / 1000.0;
+  c.z -= c.vel * t * Cos(c.th) / 100.0;
+  c.x -= c.vel * t * Sin(c.th) / 100.0;
   vertex_t cloc = (vertex_t){c.x, c.y, c.z};
   getCurrentGrid(&cloc, &g);
   sun_angle = fmod(90*t,360.0);
@@ -240,9 +275,12 @@ int main(int argc,char* argv[])
 
   c.x = c.y = c.z = 0.0;
   c.dimx = c.dimy = c.dimz = 0.1;
-  c.th = 0;
+  c.th  = 0;
+  c.ph = -25;
   c.vel = 0;
   c.acc = 0.005;
+  c.dist = 1.4;
+  c.height = 0.8;
 
   v.th = v.ph = 0; //unused for now, not until 3P POV
   v.dim = 4;

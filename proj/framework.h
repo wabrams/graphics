@@ -42,8 +42,10 @@ typedef struct car_st
 {
   float x, y, z;
   float dimx, dimy, dimz;
-  float th;
+  int th, ph;
   float vel, acc;
+  float dist;
+  float height;
 } car_t;
 
 typedef struct light_s
