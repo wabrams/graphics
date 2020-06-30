@@ -27,7 +27,7 @@ void drawCuboid(cuboid_t * c)
 {
   glPushMatrix();
   // offset
-  glTranslatef(c -> x, c -> y, c -> z); //TODO: translatef vs rotatef
+  glTranslatef(c -> x, c -> y, c -> z);
   glRotatef(c -> th, 0, 1, 0);
   glScalef(c -> dimx, c -> dimy, c -> dimz);
   // draw
@@ -128,21 +128,73 @@ void drawSkybox(vertex_t * v, float D)
 
 void drawCar(car_t * c)
 {
-  //temp:
-  cuboid_t cube;
-  cube.x = c -> x;
-  cube.y = c -> y;
-  cube.z = c -> z;
-  cube.dimx = c -> dimx;
-  cube.dimy = c -> dimy;
-  cube.dimz = c -> dimz;
-  cube.th = c -> th;
-  for (int i = 0; i < 6; i++)
-  {
-    color_t color = (color_t){0xFF, 0xFF, 0xFF};
-    cube.colors[i] = color;
-  }
-  drawCuboid(&cube);
+  glPushMatrix();
+  // offset
+  glTranslatef(c -> x, c -> y, c -> z);
+  glRotatef(c -> th, 0, 1, 0);
+  glScalef(c -> dimx / 2.0, c -> dimy, c -> dimz / 2.0);
+  // frame
+  float shiny = 1;
+  float white[] = {1,1,1,1};
+  float black[] = {0,0,0,1};
+  glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,black);
+  glBegin(GL_QUADS);
+  glColor3ub(0xFF, 0x00, 0x00);
+    // bottom
+    glNormal3d(0, -1, 0);
+    glVertex3f(-1.0, 0.2,-1.0);
+    glVertex3f(-1.0, 0.2, 1.0);
+    glVertex3f( 1.0, 0.2, 1.0);
+    glVertex3f( 1.0, 0.2,-1.0);
+    // top
+    glNormal3d(0, +1, 0);
+    glVertex3f(-1.0, 0.5,-1.0);
+    glVertex3f(-1.0, 0.5, 1.0);
+    glVertex3f( 1.0, 0.5, 1.0);
+    glVertex3f( 1.0, 0.5,-1.0);
+    // front bumper
+    glNormal3d(0, 0, -1);
+    glVertex3f(-1.0, 0.2,-1.0);
+    glVertex3f( 1.0, 0.2,-1.0);
+    glVertex3f( 1.0, 0.5,-1.0);
+    glVertex3f(-1.0, 0.5,-1.0);
+    // rear bumper
+    glNormal3d(0, 0, +1);
+    glVertex3f(-1.0, 0.2, 1.0);
+    glVertex3f( 1.0, 0.2, 1.0);
+    glVertex3f( 1.0, 0.5, 1.0);
+    glVertex3f(-1.0, 0.5, 1.0);
+    // left side
+    glNormal3d(-1, 0, 0);
+    glVertex3f(-1.0, 0.2,-1.0);
+    glVertex3f(-1.0, 0.2, 1.0);
+    glVertex3f(-1.0, 0.5, 1.0);
+    glVertex3f(-1.0, 0.5,-1.0);
+    // right side
+    glNormal3d(+1, 0, 0);
+    glVertex3f( 1.0, 0.2,-1.0);
+    glVertex3f( 1.0, 0.2, 1.0);
+    glVertex3f( 1.0, 0.5, 1.0);
+    glVertex3f( 1.0, 0.5,-1.0);
+    // roof top
+    glNormal3d(0, +1, 0);
+    glVertex3f(-1.0, 0.7,-0.1);
+    glVertex3f(-1.0, 0.7, 0.6);
+    glVertex3f( 1.0, 0.7, 0.6);
+    glVertex3f( 1.0, 0.7,-0.1);
+    // roof left side
+    // roof right side
+
+  glColor3ub(0x00, 0xFF, 0xFF);
+    // front windshield
+    
+    // rear windshield
+  glEnd();
+
+
+  glPopMatrix();
 }
 
 static void polarVertex(float th, float ph)

@@ -26,9 +26,11 @@ view_t v;
 car_t c;
 grid_t g;
 light_t l;
+int dr = 0;
 float sun_dist   =  1;
 float sun_angle  =  0;
 float sun_height =  1.5;
+
 
 void write(float x, float y, float z, const char * format, ...)
 {
@@ -94,8 +96,8 @@ void display()
   glLoadIdentity();
 
   glRotatef(-c.ph, 1, 0, 0);
-  glRotatef(-c.th,   0, 1, 0);
-  glTranslatef(-c.x - (c.dist * Sin(c.th)), -c.y - c.height, -c.z - (c.dist * Cos(c.th)));
+  glRotatef(-c.th - dr,   0, 1, 0);
+  glTranslatef(-c.x - (c.dist * Sin(c.th + dr)), -c.y - c.height, -c.z - (c.dist * Cos(c.th + dr)));
 
   // glEnable(GL_CULL_FACE);
   glShadeModel(GL_SMOOTH);
@@ -134,7 +136,6 @@ void display()
   glLightfv(GL_LIGHT0,GL_SPECULAR,Specular);
   glLightfv(GL_LIGHT0,GL_POSITION,Position);
 
-
   //draw car
   drawCar(&c);
 
@@ -166,7 +167,7 @@ void display()
   #endif
 
   info(5, 5, "GRID: (%3d, %3d, %3d), CPOS: (%.2f, %.2f), %.2f, VEL: %.2f", g.x, g.y, g.z, c.x, c.y, c.z, c.vel);
-  info(5, 20, "DIST: %f, HEIGHT: %f, PH: %f", c.dist, c.height, c.ph);
+  info(5, 20, "DIST: %f, HEIGHT: %f, PH: %d", c.dist, c.height, c.ph);
 
   check("func-display");
   glFlush();
@@ -190,6 +191,7 @@ void keyboard(unsigned char k, int x, int y)
     case '0':
       c.vel = 0;
       c.x = c.z = 0;
+      dr = 0;
       break;
     case 'W':
     case 'w':
@@ -199,7 +201,7 @@ void keyboard(unsigned char k, int x, int y)
     case 'A':
     case 'a':
       c.th = fmod(c.th + 5.0, 360.0);
-      c.vel += (c.vel == 0)? 0: (c.vel > 0.01)? -0.01 : 0.01;
+      // c.vel += (c.vel == 0)? 0: (c.vel > 0.01)? -0.01 : 0.01;
       break;
     case 's':
     case 'S':
@@ -209,7 +211,7 @@ void keyboard(unsigned char k, int x, int y)
     case 'D':
     case 'd':
       c.th = fmod(c.th - 5.0, 360.0);
-      c.vel += (c.vel == 0)? 0: (c.vel > 0.01)? -0.01 : 0.01;
+      // c.vel += (c.vel == 0)? 0: (c.vel > 0.01)? -0.01 : 0.01;
       break;
     case '+':
     case '=':
@@ -244,18 +246,27 @@ void special(int k, int x, int y)
   switch (k)
   {
     case GLUT_KEY_UP:
-      c.ph += 5;
+      c.ph += 5; //TODO: bound
       break;
     case GLUT_KEY_LEFT:
+      dr += 5;
       break;
     case GLUT_KEY_DOWN:
       c.ph -= 5;
       break;
     case GLUT_KEY_RIGHT:
+      dr -= 5;
+      break;
+    case GLUT_KEY_PAGE_UP:
+      v.fov -= 1;
+      break;
+    case GLUT_KEY_PAGE_DOWN:
+      v.fov += 1;
       break;
   }
 
   check("func-special");
+  projection();
   glutPostRedisplay();
 }
 void idle()
@@ -274,7 +285,9 @@ int main(int argc,char* argv[])
   w.width = w.height = 500;
 
   c.x = c.y = c.z = 0.0;
-  c.dimx = c.dimy = c.dimz = 0.1;
+  c.dimx = 0.05;
+  c.dimy = 0.1;
+  c.dimz = 0.1;
   c.th  = 0;
   c.ph = -25;
   c.vel = 0;

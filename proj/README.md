@@ -2,26 +2,26 @@
 
 Neighborhood Driving Simulator
 
-See new project proposal (enclosed as reproposal.pdf).
-
 ## Features (so far)
   * Procedure for chunk generation, based on spatial grid coordinates (gX and gZ)
   * Randomized house colors
   * Driving through houses (no damage, just didn't bound the user location to roads)
 
 ## Controls
-  * W - move forwards
-  * S - move backwards
-  * A - strafe left
-  * D - strafe right
+  * W - accelerate forwards
+  * S - accelerate backwards
+  * A - steer left
+  * D - steer right
   * UpArrow - look up
   * DownArrow - look down
+  * 0 - return to origin
+  * SpaceBar - stop (emergency brake)
 
 # To Do List (no particular order)
 
 Monday: {Evening: [Replace Cube with Car]}
 
-Tuesday: {Morning: [Lighting, Overhead (Moon)]}
+Tuesday: {[Lighting, Overhead (Moon)]}
 
 Wednesday: {Morning: [Particles from Car Exhaust], Midday: [Polishing Scene], Evening: [More
-customization (change color of car, etc), User Interaction / Info]}
+customization (change color of car, etc), Stay on the Roads]}
