@@ -16,12 +16,11 @@ Neighborhood Driving Simulator
   * DownArrow - look down
   * 0 - return to origin
   * SpaceBar - stop (emergency brake)
+  * PageUp - zoom in (decrease FOV)
+  * PageDown - zoom out (increase FOV)
 
-# To Do List (no particular order)
+## Code Reuse
 
-Monday: {Evening: [Replace Cube with Car]}
+Critical: More scenery in the scene (not just boring houses)
 
-Tuesday: {[Lighting, Overhead (Moon)]}
-
-Wednesday: {Morning: [Particles from Car Exhaust], Midday: [Polishing Scene], Evening: [More
-customization (change color of car, etc), Stay on the Roads]}
+Car Headlights, Day / Night Mode, Raise Sun, Increase Brightness from Sun

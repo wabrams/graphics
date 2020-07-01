@@ -79,12 +79,12 @@ void drawCuboid(cuboid_t * c)
   glPopMatrix();
 }
 
-void drawSkybox(vertex_t * v, float D)
+void drawSkybox(vertex_t * v, float D, color_t * c)
 {
   glPushMatrix();
   glTranslated(v -> x, v -> y, v -> z);
   // glEnable(GL_TEXTURE_2D);
-  glColor3ub(0x50, 0xD9, 0xFF);
+  glColor3ub(c -> r, c -> g, c -> b);
   //  Sides
   glBindTexture(GL_TEXTURE_2D,textures[3]);
   glBegin(GL_QUADS);
@@ -185,15 +185,119 @@ void drawCar(car_t * c)
     glVertex3f( 1.0, 0.7, 0.6);
     glVertex3f( 1.0, 0.7,-0.1);
     // roof left side
+    glNormal3d(-1,  0,  0);
+    glVertex3f(-1.0,  0.5, -0.1);
+    glVertex3f(-1.0,  0.5,  0.6);
+    glVertex3f(-1.0,  0.7,  0.6);
+    glVertex3f(-1.0,  0.7, -0.1);
     // roof right side
-
+    glNormal3d( 1,  0,  0);
+    glVertex3f( 1.0,  0.5, -0.1);
+    glVertex3f( 1.0,  0.5,  0.6);
+    glVertex3f( 1.0,  0.7,  0.6);
+    glVertex3f( 1.0,  0.7, -0.1);
   glColor3ub(0x00, 0xFF, 0xFF);
     // front windshield
-    
+    glNormal3f(0,3,-2);
+    glVertex3f(-1.0,  0.5, -0.4);
+    glVertex3f(-1.0,  0.7, -0.1);
+    glVertex3f( 1.0,  0.7, -0.1);
+    glVertex3f( 1.0,  0.5, -0.4);
     // rear windshield
+    glNormal3f(0,1,2);
+    glVertex3f(-1.0,  0.5,  0.7);
+    glVertex3f(-1.0,  0.7,  0.6);
+    glVertex3f( 1.0,  0.7,  0.6);
+    glVertex3f( 1.0,  0.5,  0.7);
   glEnd();
-
-
+  glBegin(GL_TRIANGLES);
+    //front left
+    glNormal3d(-1, 0, 0);
+    glVertex3f(-1.0,  0.7, -0.1);
+    glVertex3f(-1.0,  0.5, -0.1);
+    glVertex3f(-1.0,  0.5, -0.4);
+    //back left
+    glVertex3f(-1.0,  0.7,  0.6);
+    glVertex3f(-1.0,  0.5,  0.6);
+    glVertex3f(-1.0,  0.5,  0.7);
+    //back right
+    glNormal3d(+1, 0, 0);
+    glVertex3f( 1.0,  0.7,  0.6);
+    glVertex3f( 1.0,  0.5,  0.6);
+    glVertex3f( 1.0,  0.5,  0.7);
+    //front right
+    glVertex3f( 1.0,  0.7, -0.1);
+    glVertex3f( 1.0,  0.5, -0.1);
+    glVertex3f( 1.0,  0.5, -0.4);
+  glEnd();
+  //headlights (casing):
+  glColor3ub(0xAA, 0xAA, 0xAA); //light gray
+  glBegin(GL_QUADS);
+    glNormal3d(-1, 0, 0);
+      //left headlight, left face
+      glVertex3f(-0.6,  0.45, -1.1);
+      glVertex3f(-0.6,  0.35, -1.1);
+      glVertex3f(-0.6,  0.35, -1.0);
+      glVertex3f(-0.6,  0.45, -1.0);
+      //right headlight, left face
+      glVertex3f( 0.4,  0.45, -1.1);
+      glVertex3f( 0.4,  0.35, -1.1);
+      glVertex3f( 0.4,  0.35, -1.0);
+      glVertex3f( 0.4,  0.45, -1.0);
+    glNormal3d(0, -1, 0);
+      //left headlight, bottom face
+      glVertex3f( 0.0,  0.35,  0.0);
+      glVertex3f( 0.0,  0.35,  0.0);
+      glVertex3f( 0.0,  0.35,  0.0);
+      glVertex3f( 0.0,  0.35,  0.0);
+      //right headlight, bottom face
+      glVertex3f( 0.0,  0.35,  0.0);
+      glVertex3f( 0.0,  0.35,  0.0);
+      glVertex3f( 0.0,  0.35,  0.0);
+      glVertex3f( 0.0,  0.35,  0.0);
+    glNormal3d(+1, 0, 0);
+    //left headlight, right face
+      glVertex3f(-0.4,  0.45, -1.1);
+      glVertex3f(-0.4,  0.35, -1.1);
+      glVertex3f(-0.4,  0.35, -1.0);
+      glVertex3f(-0.4,  0.45, -1.0);
+      //right headlight, right face
+      glVertex3f( 0.6,  0.45, -1.1);
+      glVertex3f( 0.6,  0.35, -1.1);
+      glVertex3f( 0.6,  0.35, -1.0);
+      glVertex3f( 0.6,  0.45, -1.0);
+    glNormal3d(0, +1, 0);
+    //left headlight, top face
+      glVertex3f( 0.0,  0.45,  0.0);
+      glVertex3f( 0.0,  0.45,  0.0);
+      glVertex3f( 0.0,  0.45,  0.0);
+      glVertex3f( 0.0,  0.45,  0.0);
+      //right headlight, top face
+      glVertex3f( 0.0,  0.45,  0.0);
+      glVertex3f( 0.0,  0.45,  0.0);
+      glVertex3f( 0.0,  0.45,  0.0);
+      glVertex3f( 0.0,  0.45,  0.0);
+  glEnd();
+  //headlights (lights):
+  glColor3ub(0xFF, 0xFF, 0x00);
+  float yellow[] = {1.0,1.0,0.0,1.0};
+  float Emission[]  = {0.0,0.0,0.00,1.0};
+  glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,yellow);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,Emission);
+  glBegin(GL_QUADS);
+    glNormal3d(0, 0, -1);
+    //right
+    glVertex3f( 0.4, 0.35,-1.1);
+    glVertex3f( 0.6, 0.35,-1.1);
+    glVertex3f( 0.6, 0.45,-1.1);
+    glVertex3f( 0.4, 0.45,-1.1);
+    //left
+    glVertex3f(-0.4, 0.35,-1.1);
+    glVertex3f(-0.6, 0.35,-1.1);
+    glVertex3f(-0.6, 0.45,-1.1);
+    glVertex3f(-0.4, 0.45,-1.1);
+  glEnd();
   glPopMatrix();
 }
 
@@ -206,7 +310,7 @@ void drawSun(vertex_t * v, float r, float emission, float shiny, int inc)
 {
    int th,ph;
    float yellow[] = {1.0,1.0,0.0,1.0};
-   float Emission[]  = {0.0,0.0,0.01*emission,1.0};
+   float Emission[]  = {0.0,0.0,(float)0.1*emission,1.0};
    //  Save transformation
    glPushMatrix();
    //  Offset, scale and rotate
@@ -380,56 +484,69 @@ void drawGrid(grid_t * g)
     glTexCoord2f(0.0, 0.0); glVertex3f(0.1, 0.0, 0.1);
     glTexCoord2f(4.0, 0.0); glVertex3f(0.1, 0.0, 0.9);
     glTexCoord2f(4.0, 4.0); glVertex3f(0.9, 0.0, 0.9);
-    glTexCoord2f(0.0, 4.0); glVertex3f(0.9, 0.0, 0.1); //excess texcoord2f forces tiling
+    glTexCoord2f(0.0, 4.0); glVertex3f(0.9, 0.0, 0.1); //exceed 1 w/ texcoord2f forces tiling
   glEnd();
   glDisable(GL_TEXTURE_2D);
 
   //generate the house per this grid
   color_t hcolor;
   vertex_t rsize;
+  unsigned int hsel = rand() % 16; //15 is 0b1111
   // NW house
-  varyDimensions(&rsize);
-  glTranslated(0.1 + rsize.x, 0.0, 0.1 + rsize.z);
-    hcolor.r = rand();
-    hcolor.g = rand();
-    hcolor.b = rand();
-    glScalef(rsize.x, rsize.y, rsize.z);
-    glColor3ub(hcolor.r, hcolor.g, hcolor.b);
-    drawHouse();
-    glScalef(1.0/rsize.x, 1.0/rsize.y, 1.0/rsize.z);
-    glTranslated(-0.1 - rsize.x, 0.0, -0.1 - rsize.z);
+  if (hsel & 0b0001)
+  {
+    varyDimensions(&rsize);
+    glTranslated(0.1 + rsize.x, 0.0, 0.1 + rsize.z);
+      hcolor.r = rand();
+      hcolor.g = rand();
+      hcolor.b = rand();
+      glScalef(rsize.x, rsize.y, rsize.z);
+      glColor3ub(hcolor.r, hcolor.g, hcolor.b);
+      drawHouse();
+      glScalef(1.0/rsize.x, 1.0/rsize.y, 1.0/rsize.z);
+      glTranslated(-0.1 - rsize.x, 0.0, -0.1 - rsize.z);
+  }
   // SW house
-  varyDimensions(&rsize);
-  glTranslated(0.1 + rsize.x, 0.0, 0.5 + rsize.z);
-    hcolor.r = rand();
-    hcolor.g = rand();
-    hcolor.b = rand();
-    glScalef(rsize.x, rsize.y, rsize.z);
-    glColor3ub(hcolor.r, hcolor.g, hcolor.b);
-    drawHouse();
-    glScalef(1.0/rsize.x, 1.0/rsize.y, 1.0/rsize.z);
-    glTranslated(-0.1 - rsize.x, 0.0, -0.5 - rsize.z);
+  if (hsel & 0b0010)
+  {
+    varyDimensions(&rsize);
+    glTranslated(0.1 + rsize.x, 0.0, 0.5 + rsize.z);
+      hcolor.r = rand();
+      hcolor.g = rand();
+      hcolor.b = rand();
+      glScalef(rsize.x, rsize.y, rsize.z);
+      glColor3ub(hcolor.r, hcolor.g, hcolor.b);
+      drawHouse();
+      glScalef(1.0/rsize.x, 1.0/rsize.y, 1.0/rsize.z);
+      glTranslated(-0.1 - rsize.x, 0.0, -0.5 - rsize.z);
+  }
   // SE house
-  varyDimensions(&rsize);
-  glTranslated(0.5 + rsize.x, 0.0, 0.5 + rsize.z);
-    hcolor.r = rand();
-    hcolor.g = rand();
-    hcolor.b = rand();
-    glScalef(rsize.x, rsize.y, rsize.z);
-    glColor3ub(hcolor.r, hcolor.g, hcolor.b);
-    drawHouse();
-    glScalef(1.0/rsize.x, 1.0/rsize.y, 1.0/rsize.z);
-    glTranslated(-0.5 - rsize.x, 0.0, -0.5 - rsize.z);
+  if (hsel & 0b0100)
+  {
+    varyDimensions(&rsize);
+    glTranslated(0.5 + rsize.x, 0.0, 0.5 + rsize.z);
+      hcolor.r = rand();
+      hcolor.g = rand();
+      hcolor.b = rand();
+      glScalef(rsize.x, rsize.y, rsize.z);
+      glColor3ub(hcolor.r, hcolor.g, hcolor.b);
+      drawHouse();
+      glScalef(1.0/rsize.x, 1.0/rsize.y, 1.0/rsize.z);
+      glTranslated(-0.5 - rsize.x, 0.0, -0.5 - rsize.z);
+  }
   // NE house
-  varyDimensions(&rsize);
-  glTranslated(0.5 + rsize.x, 0.0, 0.1 + rsize.z);
-    hcolor.r = rand();
-    hcolor.g = rand();
-    hcolor.b = rand();
-    glScalef(rsize.x, rsize.y, rsize.z);
-    glColor3ub(hcolor.r, hcolor.g, hcolor.b);
-    drawHouse();
-    glScalef(1.0/rsize.x, 1.0/rsize.y, 1.0/rsize.z);
-    glTranslated(-0.5 - rsize.x, 0.0, -0.1 - rsize.z);
+  if (hsel & 0b1000)
+  {
+    varyDimensions(&rsize);
+    glTranslated(0.5 + rsize.x, 0.0, 0.1 + rsize.z);
+      hcolor.r = rand();
+      hcolor.g = rand();
+      hcolor.b = rand();
+      glScalef(rsize.x, rsize.y, rsize.z);
+      glColor3ub(hcolor.r, hcolor.g, hcolor.b);
+      drawHouse();
+      glScalef(1.0/rsize.x, 1.0/rsize.y, 1.0/rsize.z);
+      glTranslated(-0.5 - rsize.x, 0.0, -0.1 - rsize.z);
+  }
   glPopMatrix();
 }

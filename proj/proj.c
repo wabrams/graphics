@@ -14,7 +14,7 @@
 #include "framework.h"
 #include "shapes.h"
 
-#define SHOW_AXES 1
+#define SHOW_AXES 0
 #define SHOW_RD   10 //render distance
 
 #define NUMBER_CUBOIDS 2
@@ -30,7 +30,8 @@ int dr = 0;
 float sun_dist   =  1;
 float sun_angle  =  0;
 float sun_height =  1.5;
-
+bool daytime = true;
+color_t skyday, skynight;
 
 void write(float x, float y, float z, const char * format, ...)
 {
@@ -98,10 +99,8 @@ void display()
   glRotatef(-c.ph, 1, 0, 0);
   glRotatef(-c.th - dr,   0, 1, 0);
   glTranslatef(-c.x - (c.dist * Sin(c.th + dr)), -c.y - c.height, -c.z - (c.dist * Cos(c.th + dr)));
-
-  // glEnable(GL_CULL_FACE);
   glShadeModel(GL_SMOOTH);
-
+  glEnable(GL_CULL_FACE);
   // color and position vectors
   float Ambient[]   = {(float)0.01*l.ambient,
                        (float)0.01*l.ambient,
@@ -120,24 +119,33 @@ void display()
                        sun_dist*(float)Sin(sun_angle),
                        1.0};
   vertex_t sun_pos = (vertex_t) {Position[0], Position[1], Position[2]};
-  //  Draw light position as ball (still no lighting here)
-  glColor3f(1,1,1);
-  drawSun(&sun_pos, 0.2, l.emission, l.shiny, 4);
   //  OpenGL should normalize normal vectors
   glEnable(GL_NORMALIZE);
+
+  //  Draw light position as ball (still no lighting here)
+  glColor3f(1,1,1);
+  if (daytime)
+    drawSun(&sun_pos, 0.2, l.emission, l.shiny, 4);
+
   //  Enable lighting
   glEnable(GL_LIGHTING);
   glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, true);
   glColorMaterial(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE);
   glEnable(GL_COLOR_MATERIAL);
-  glEnable(GL_LIGHT0);
+  if (daytime)
+    glEnable(GL_LIGHT0);
+  else
+    glDisable(GL_LIGHT0);
   glLightfv(GL_LIGHT0,GL_AMBIENT ,Ambient);
   glLightfv(GL_LIGHT0,GL_DIFFUSE ,Diffuse);
   glLightfv(GL_LIGHT0,GL_SPECULAR,Specular);
   glLightfv(GL_LIGHT0,GL_POSITION,Position);
+  //TODO: glLightfv for headlights
 
   //draw car
+  glDisable(GL_CULL_FACE);
   drawCar(&c);
+  glEnable(GL_CULL_FACE);
 
   //draw grids
   for (int i = -SHOW_RD; i < SHOW_RD; i++)
@@ -149,7 +157,7 @@ void display()
 
   glDisable(GL_LIGHTING);
   vertex_t v = (vertex_t){c.x, c.y, c.z};
-  drawSkybox(&v, 4.0);
+  drawSkybox(&v, 4.0, daytime ? &skyday : &skynight);
   glColor3f(1, 1, 1);
   #if SHOW_AXES
     glBegin(GL_LINES);
@@ -233,6 +241,10 @@ void keyboard(unsigned char k, int x, int y)
       if (c.height < 1.0)
         c.height += 0.1;
       break;
+    case 'n':
+    case 'N':
+      daytime = !daytime;
+      break;
   }
 
   check("func-keyboard");
@@ -282,11 +294,11 @@ void idle()
 
 int main(int argc,char* argv[])
 {
-  w.width = w.height = 500;
+  w.width = w.height = 600;
 
   c.x = c.y = c.z = 0.0;
   c.dimx = 0.05;
-  c.dimy = 0.1;
+  c.dimy = 0.05;
   c.dimz = 0.1;
   c.th  = 0;
   c.ph = -25;
@@ -305,9 +317,17 @@ int main(int argc,char* argv[])
   l.specular = 0;
   l.shininess = 0;
   l.shiny = 1;
+  // #2b64c4
+  skyday.r = 0x2b;
+  skyday.g = 0x64;
+  skyday.b = 0xc4;
+  // #2e2083
+  skynight.r = 0x2e;
+  skynight.g = 0x20;
+  skynight.b = 0x83;
 
   glutInit(&argc,argv);
-  glutInitWindowSize(500,500);
+  glutInitWindowSize(w.width,w.height);
   glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
   glutCreateWindow("William Abrams - A Suburban Drive");
   glutIdleFunc(idle);
