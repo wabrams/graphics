@@ -14,7 +14,7 @@
 #include "framework.h"
 #include "shapes.h"
 
-#define SHOW_AXES 0
+#define SHOW_AXES 1
 #define SHOW_RD   10 //render distance
 
 #define NUMBER_CUBOIDS 2
@@ -32,6 +32,7 @@ float sun_angle  =  0;
 float sun_height =  1.5;
 bool daytime = true;
 color_t skyday, skynight;
+const float car_spread = 15;
 
 void write(float x, float y, float z, const char * format, ...)
 {
@@ -118,8 +119,13 @@ void display()
                        sun_height,
                        sun_dist*(float)Sin(sun_angle),
                        1.0};
+  float Cosition[] = {c.x, c.y + (float)0.2, c.z, 1.0}; //Car Position
+
   vertex_t sun_pos = (vertex_t) {Position[0], Position[1], Position[2]};
-  //  OpenGL should normalize normal vectors
+  vertex_t car_pos = (vertex_t){c.x, c.y + 0.4, c.z};
+  float car_dir[] = {-(float)Sin(c.th), -0.1, -(float)Cos(c.th)};
+
+  //  OpenGL should normalize the normal vectors
   glEnable(GL_NORMALIZE);
 
   //  Draw light position as ball (still no lighting here)
@@ -133,14 +139,25 @@ void display()
   glColorMaterial(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE);
   glEnable(GL_COLOR_MATERIAL);
   if (daytime)
+  {
     glEnable(GL_LIGHT0);
+    glDisable(GL_LIGHT1);
+  }
   else
+  {
     glDisable(GL_LIGHT0);
+    glEnable(GL_LIGHT1);
+  }
   glLightfv(GL_LIGHT0,GL_AMBIENT ,Ambient);
   glLightfv(GL_LIGHT0,GL_DIFFUSE ,Diffuse);
   glLightfv(GL_LIGHT0,GL_SPECULAR,Specular);
   glLightfv(GL_LIGHT0,GL_POSITION,Position);
-  //TODO: glLightfv for headlights
+  glLightfv(GL_LIGHT1,GL_AMBIENT ,Ambient);
+  glLightfv(GL_LIGHT1,GL_DIFFUSE ,Diffuse);
+  glLightfv(GL_LIGHT1,GL_SPECULAR,Specular);
+  glLightfv(GL_LIGHT1,GL_POSITION,Cosition);
+  glLightfv(GL_LIGHT1,GL_SPOT_DIRECTION, car_dir);
+  glLightfv(GL_LIGHT1, GL_SPOT_CUTOFF, &car_spread);
 
   //draw car
   glDisable(GL_CULL_FACE);
@@ -156,8 +173,8 @@ void display()
     }
 
   glDisable(GL_LIGHTING);
-  vertex_t v = (vertex_t){c.x, c.y, c.z};
-  drawSkybox(&v, 4.0, daytime ? &skyday : &skynight);
+
+  drawSkybox(&car_pos, 4.0, daytime ? &skyday : &skynight);
   glColor3f(1, 1, 1);
   #if SHOW_AXES
     glBegin(GL_LINES);
@@ -313,7 +330,7 @@ int main(int argc,char* argv[])
 
   l.emission = 0;
   l.ambient = 10;
-  l.diffuse = 50;
+  l.diffuse = 100;
   l.specular = 0;
   l.shininess = 0;
   l.shiny = 1;

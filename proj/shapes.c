@@ -246,15 +246,15 @@ void drawCar(car_t * c)
       glVertex3f( 0.4,  0.45, -1.0);
     glNormal3d(0, -1, 0);
       //left headlight, bottom face
-      glVertex3f( 0.0,  0.35,  0.0);
-      glVertex3f( 0.0,  0.35,  0.0);
-      glVertex3f( 0.0,  0.35,  0.0);
-      glVertex3f( 0.0,  0.35,  0.0);
+      glVertex3f(-0.6,  0.35, -1.1);
+      glVertex3f(-0.4,  0.35, -1.1);
+      glVertex3f(-0.4,  0.35, -1.0);
+      glVertex3f(-0.6,  0.35, -1.0);
       //right headlight, bottom face
-      glVertex3f( 0.0,  0.35,  0.0);
-      glVertex3f( 0.0,  0.35,  0.0);
-      glVertex3f( 0.0,  0.35,  0.0);
-      glVertex3f( 0.0,  0.35,  0.0);
+      glVertex3f( 0.6,  0.35, -1.1);
+      glVertex3f( 0.4,  0.35, -1.1);
+      glVertex3f( 0.4,  0.35, -1.0);
+      glVertex3f( 0.6,  0.35, -1.0);
     glNormal3d(+1, 0, 0);
     //left headlight, right face
       glVertex3f(-0.4,  0.45, -1.1);
@@ -268,15 +268,15 @@ void drawCar(car_t * c)
       glVertex3f( 0.6,  0.45, -1.0);
     glNormal3d(0, +1, 0);
     //left headlight, top face
-      glVertex3f( 0.0,  0.45,  0.0);
-      glVertex3f( 0.0,  0.45,  0.0);
-      glVertex3f( 0.0,  0.45,  0.0);
-      glVertex3f( 0.0,  0.45,  0.0);
+      glVertex3f(-0.6,  0.45, -1.1);
+      glVertex3f(-0.4,  0.45, -1.1);
+      glVertex3f(-0.4,  0.45, -1.0);
+      glVertex3f(-0.6,  0.45, -1.0);
       //right headlight, top face
-      glVertex3f( 0.0,  0.45,  0.0);
-      glVertex3f( 0.0,  0.45,  0.0);
-      glVertex3f( 0.0,  0.45,  0.0);
-      glVertex3f( 0.0,  0.45,  0.0);
+      glVertex3f( 0.6,  0.45, -1.1);
+      glVertex3f( 0.4,  0.45, -1.1);
+      glVertex3f( 0.4,  0.45, -1.0);
+      glVertex3f( 0.6,  0.45, -1.0);
   glEnd();
   //headlights (lights):
   glColor3ub(0xFF, 0xFF, 0x00);
@@ -410,6 +410,29 @@ static void drawHouse()
   glDisable(GL_TEXTURE_2D);
 }
 
+void drawPyramid() //todo: 2D texture?
+{
+  //#cdd53c
+  glColor3ub(0xb4, 0xb8, 0x69);
+  glBegin(GL_TRIANGLE_FAN);
+    //center
+    glVertex3f( 0.5,  1,  0.5);
+    glVertex3f( 0.0,  0.0,  0.0);
+    //left
+    glNormal3d(+2,1,0);
+    glVertex3f( 0.0,  0.0,  1.0);
+    //front
+    glNormal3d(0,1,+2);
+    glVertex3f( 1.0,  0.0,  1.0);
+    //right
+    glNormal3d(-2,1,0);
+    glVertex3f( 1.0,  0.0,  0.0);
+    //back
+    glNormal3d(0,1,-2);
+    glVertex3f( 0.0,  0.0,  0.0);
+  glEnd();
+}
+
 void drawGrid(grid_t * g)
 {
   srand((g -> x << 16) + (g -> z));
@@ -505,6 +528,15 @@ void drawGrid(grid_t * g)
       drawHouse();
       glScalef(1.0/rsize.x, 1.0/rsize.y, 1.0/rsize.z);
       glTranslated(-0.1 - rsize.x, 0.0, -0.1 - rsize.z);
+  }
+  else if (hsel < 8)
+  {
+    varyDimensions(&rsize);
+    glTranslated(0.1 + rsize.x, 0.0, 0.1 + rsize.z);
+    glScalef(rsize.x, rsize.y, rsize.z);
+    drawPyramid();
+    glScalef(1.0/rsize.x, 1.0/rsize.y, 1.0/rsize.z);
+    glTranslated(-0.1 - rsize.x, 0.0, -0.1 - rsize.z);
   }
   // SW house
   if (hsel & 0b0010)
